@@ -33,6 +33,47 @@ public class GraphicsContext
         mImageProducer.setAnimated(true);
         mImageProducer.setFullBufferUpdates(true);  
         imageBuffer = Toolkit.getDefaultToolkit().createImage(mImageProducer); 
+        
+        this.pixels = pixels;
+        this.mImageProducer = mImageProducer;
+        this.imageBuffer = imageBuffer;
+        this.cm = cm;
+    }
+    
+    public int[] getPixels()
+    {
+        return pixels;
+    }
+    
+    public ColorModel getColorModel()
+    {
+        return cm;
+    }
+    
+    public Image getImageBuffer()
+    {
+        return imageBuffer;
+    }
+    
+    public MemoryImageSource getMemoryImageSource()
+    {
+        return mImageProducer;
+    }
+    
+    public void fill()
+    {
+        int[] pi = pixels; // this avoid crash when resizing
+        //a=h/w
+        final int h= 600;
+        if(pi.length != 800 * 600) return;        
+        for (int x=0;x<800;x++) {
+            for (int y=0;y<600;y++) {
+                boolean found=false;
+                if (!found) {
+                    pi[x + y * 800] = -16777216;
+                }
+            }
+        }   
     }
     
      protected static ColorModel getCompatibleColorModel(){        

@@ -4,7 +4,7 @@ package com.ryancodesgames.apollo.mathlib;
 
 public class Matrix 
 {
-    public double[][] matrix = new double[4][4];
+    double[][] matrix = new double[4][4];
     
     public Matrix(double[][] matrix)
     {
@@ -16,52 +16,32 @@ public class Matrix
         
     }
     
-    public Vec3D multiplyMatrixVector(Vec3D in, Matrix mat)
+    public Vec3D multiplyMatrixVector(Vec3D in, Matrix m)
     {
         Vec3D out = new Vec3D(0,0,0);
         
-        out.x = in.x * mat.matrix[0][0] + in.y * mat.matrix[1][0] + in.z * mat.matrix[2][0] + mat.matrix[3][0];
-        out.y = in.x * mat.matrix[0][1] + in.y * mat.matrix[1][1] + in.z * mat.matrix[2][1] + mat.matrix[3][1];
-        out.z = in.x * mat.matrix[0][2] + in.y * mat.matrix[1][2] + in.z * mat.matrix[2][2] + mat.matrix[3][2];
-        
-        double w = in.x * mat.matrix[0][3] + in.y * mat.matrix[1][3] + in.z * mat.matrix[2][3] + mat.matrix[3][3];
-        
-        if(w != 0.0)
-        {
-            out.x /= w;
-            out.y /= w;
-            out.z /= w;
-        }
-        
+        out.x = in.x * m.matrix[0][0] + in.y * m.matrix[1][0] + in.z * m.matrix[2][0] + in.w * m.matrix[3][0];
+        out.y = in.x * m.matrix[0][1] + in.y * m.matrix[1][1] + in.z * m.matrix[2][1] + in.w * m.matrix[3][1];
+        out.z = in.x * m.matrix[0][2] + in.y * m.matrix[1][2] + in.z * m.matrix[2][2] + in.w * m.matrix[3][2]; 
+        out.w = in.x * m.matrix[0][3] + in.y * m.matrix[1][3] + in.z * m.matrix[2][3] + in.w * m.matrix[3][3];
+
         return out;
     }
     
     public Matrix projectionMatrix(double fov, double a, double fNear, double fFar)
     {
-        Matrix mat = new Matrix(new double[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}});
+        double fovRad = 1.00f/Math.tan(fov*0.50/Math.PI*180.00);
         
-        double fovRad = 1.00/Math.tan(fov*0.50/Math.PI*180.00);
+        Matrix mat = new Matrix(new double[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}});
         
         mat.matrix[0][0] = a * fovRad;
-        mat.matrix[1][1] = fovRad;
-        mat.matrix[2][2] = fFar / fFar - fNear;
-        mat.matrix[3][2] = 1.0;
-        mat.matrix[2][3] = -fFar * fNear / fFar - fNear;
-        mat.matrix[3][3] = 0.0;
+	mat.matrix[1][1] = fovRad;
+	mat.matrix[2][2] = fFar / (fFar - fNear);
+	mat.matrix[3][2] = 1.0;
+	mat.matrix[2][3] = (-fFar * fNear) / (fFar - fNear);
+	mat.matrix[3][3] = 0.0;
         
-        return mat;
-    }
-    
-    public Matrix identityMatrix()
-    {
-        Matrix mat = new Matrix(new double[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}});
-        
-        mat.matrix[0][0] = 1.0;
-        mat.matrix[1][1] = 1.0;
-        mat.matrix[2][2] = 1.0;
-        mat.matrix[3][3] = 1.0;
-        
-        return mat;
+	return mat;
     }
     
     public Matrix rotationMatrixX(double angle)
@@ -106,37 +86,51 @@ public class Matrix
         return mat;
     }
     
+    public Matrix identityMatrix()
+    {
+         Matrix mat = new Matrix(new double[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}});
+         
+         mat.matrix[0][0] = 1.0;
+         mat.matrix[1][1] = 1.0;
+         mat.matrix[2][2] = 1.0;
+         mat.matrix[3][3] = 1.0;
+         
+         return mat;
+    }
+    
     public Matrix translationMatrix(double x, double y, double z)
     {
-        Matrix mat = new Matrix(new double[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}});
-        
-	mat.matrix[0][0] = 1.0f;
-	mat.matrix[1][1] = 1.0f;
-	mat.matrix[2][2] = 1.0f;
-	mat.matrix[3][3] = 1.0f;
-	mat.matrix[3][0] = x;
-	mat.matrix[3][1] = y;
-	mat.matrix[3][2] = z;
-        
-	return mat;
+         Matrix mat = new Matrix(new double[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}});
+         
+         mat.matrix[0][0] = 1.0;
+         mat.matrix[0][0] = 1.0;
+         mat.matrix[1][1] = 1.0;
+         mat.matrix[2][2] = 1.0;
+         mat.matrix[3][3] = 1.0;
+         mat.matrix[3][0] = x;
+         mat.matrix[3][1] = y;
+         mat.matrix[3][2] = z;
+         
+         return mat;
     }
     
     public Matrix matrixMatrixMultiplication(Matrix m1, Matrix m2)
     {
         Matrix mat = new Matrix(new double[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}});
         
-	for (int c = 0; c < 4; c++)
+        for(int c = 0; c < 4; c++)
         {
-            for (int r = 0; r < 4; r++)
+            for(int r = 0; r < 4; r++)
             {
-                mat.matrix[r][c] = m1.matrix[r][0] * m2.matrix[0][c] + m1.matrix[r][1] * m2.matrix[1][c] + m1.matrix[r][2] * m2.matrix[2][c] + m1.matrix[r][3] * m2.matrix[3][c];
+                mat.matrix[r][c] = m1.matrix[r][0] * m2.matrix[0][c] + m1.matrix[r][1] * m2.matrix[1][c] +
+                m1.matrix[r][2] * m2.matrix[2][c] + m1.matrix[r][3] * m2.matrix[3][c];
             }
         }
-			
-	return mat;
+        
+        return mat;
     }
     
-      public Matrix pointAtMatrix(Vec3D pos, Vec3D target, Vec3D up)
+     public Matrix pointAtMatrix(Vec3D pos, Vec3D target, Vec3D up)
     {
         //CALCULATE THE NEW FOWARD DIRECTION
         Vec3D newForward = new Vec3D(0,0,0);

@@ -20,10 +20,10 @@ public class Mesh
     
     public Texture tex;
     
-    public Mesh(List<Triangle> tris, BufferedImage img)
+    public Mesh(List<Triangle> tris, BufferedImage im)
     {
         this.triangles = tris;
-        this.img= img;
+        this.img = im;
         tex = new Texture(img);
     }
     
@@ -37,7 +37,7 @@ public class Mesh
         
     }
     
-     public static String[] readFromFile(String filename) {
+   public static String[] readFromFile(String filename) {
 		File file = new File(filename);
 		//System.out.println(file.getAbsolutePath());
 		List<String> contents= new ArrayList<String>();

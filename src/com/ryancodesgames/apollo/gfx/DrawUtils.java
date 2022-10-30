@@ -265,24 +265,8 @@ public class DrawUtils
     }
     
     public static void TexturedTriangle(Graphics2D g2, int x1, int y1, double u1, double v1, double w1, int x2, int y2, double
-    u2, double v2, double w2, int x3, int y3, double u3, double v3, double w3, BufferedImage img, Texture tex, double visibility, boolean fog, int[] pix, double[] zBuffer, int[] texArray)
+    u2, double v2, double w2, int x3, int y3, double u3, double v3, double w3,Texture tex, double visibility, boolean fog, int[] pix, double[] zBuffer, int[] texArray)
     {
-//        short[] doubleBufferData;
-//        DataBuffer dest = img.getRaster().getDataBuffer();
-//        doubleBufferData = ((DataBufferUShort)dest).getData();
-     // PowerOf2Texture power = (PowerOf2Texture)createTexture(img);
-        
-        byte[] pixels = ((DataBufferByte)img.getRaster().getDataBuffer()).getData();
-        int pixelLength = 3;
-        int width = img.getWidth();
-        int height = img.getHeight();
-        boolean hasAlphaChannel = img.getAlphaRaster() != null;
-        pixelLength = 3;
-        if (hasAlphaChannel)
-        {
-            pixelLength = 4;
-        }
-        
         
         if(y2 < y1)
         {
