@@ -4,7 +4,9 @@ package com.ryancodesgames.apollo;
 import static com.ryancodesgames.apollo.ApolloPS1.getFrameHeight;
 import static com.ryancodesgames.apollo.ApolloPS1.getFrameWidth;
 import com.ryancodesgames.apollo.camera.Camera;
+import static com.ryancodesgames.apollo.gfx.ColorUtils.BLACK;
 import static com.ryancodesgames.apollo.gfx.DrawUtils.TexturedTriangle;
+import static com.ryancodesgames.apollo.gfx.DrawUtils.swap;
 import com.ryancodesgames.apollo.gfx.GraphicsContext;
 import com.ryancodesgames.apollo.gfx.ZBuffer;
 import com.ryancodesgames.apollo.input.KeyHandler;
@@ -14,7 +16,6 @@ import com.ryancodesgames.apollo.mathlib.Transformation;
 import com.ryancodesgames.apollo.mathlib.Triangle;
 import com.ryancodesgames.apollo.mathlib.Vec2D;
 import com.ryancodesgames.apollo.mathlib.Vec3D;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
@@ -38,7 +39,7 @@ public class GamePanel extends JPanel implements Runnable
 {
     Thread gameThread;
     //FRAMES PER SECOND
-    double fps = 60;
+    double fps = 100;
     //CLASS THAT HANDLES KEYBOARD USER INPUT
     KeyHandler keyH = new KeyHandler();
     //SIZE OF WINDOW
@@ -263,18 +264,16 @@ public class GamePanel extends JPanel implements Runnable
             for (int y=0;y<600;y++) {
                 boolean found=false;
                 if (!found) {
-                    pi[x + y * 800] = -16777216;
+                    pi[x + y * frameWidth] = BLACK;
                 }
             }
         }   
         
         Graphics2D g2 = (Graphics2D)g;
 
-        //FILL SCREEN BLACK
-        g.setColor(Color.black);
-        g.fillRect(0, 0, frameWidth, frameHeight);
-        
-        gc.fill();
+//        //FILL SCREEN BLACK
+//        g.setColor(Color.black);
+//        g.fillRect(0, 0, frameWidth, frameHeight);
         
         //fTheta += 0.02;
         
@@ -331,7 +330,6 @@ public class GamePanel extends JPanel implements Runnable
             //TAKES PROJECTION INTO ACCOUNT TO TEST SIMILARITY BETWEEN NORMAL AND CAMERA VECTOR
             if(line1.dotProduct(normal, vCameraRay) < 0.0)
             {
-                
                 //DEFINE DIRECTION OF LIGHT SOURCE TO APPLY TO SURFACES
                 Vec3D light_direction = new Vec3D(0,0,-1);
                 light_direction = line1.normalize(light_direction);
@@ -483,11 +481,11 @@ public class GamePanel extends JPanel implements Runnable
 //                   texturedTriangle(g2, (int)tt.vec3d.x,(int)tt.vec3d.y, tt.vec2d.u, tt.vec2d.v,(int)tt.vec3d2.x,(int)tt.vec3d2.y,
 //                   tt.vec2d2.u, tt.vec2d2.v,(int)tt.vec3d3.x,(int)tt.vec3d3.y, tt.vec2d3.u, tt.vec2d3.v,
 //                    meshCube.img, visibility, false, gc.getPixels());
-                    
-                    TexturedTriangle(g2, (int)tt.vec3d.x,(int)tt.vec3d.y, tt.vec2d.u, tt.vec2d.v,tt.vec2d.w,
-                            (int)tt.vec3d2.x,(int)tt.vec3d2.y, tt.vec2d2.u, tt.vec2d2.v, tt.vec2d2.w,
-                            (int)tt.vec3d3.x,(int)tt.vec3d3.y, tt.vec2d3.u, tt.vec2d3.v, tt.vec2d3.w,
-                    tt.tex,visibility, false, pixels, zBuffer.getZBuffer(), tt.tex.getTexArray());
+                        
+//                    TexturedTriangle(g2, (int)tt.vec3d.x,(int)tt.vec3d.y, tt.vec2d.u, tt.vec2d.v,tt.vec2d.w,
+//                            (int)tt.vec3d2.x,(int)tt.vec3d2.y, tt.vec2d2.u, tt.vec2d2.v, tt.vec2d2.w,
+//                            (int)tt.vec3d3.x,(int)tt.vec3d3.y, tt.vec2d3.u, tt.vec2d3.v, tt.vec2d3.w,
+//                    tt.tex,visibility, false, pixels, zBuffer.getZBuffer(), tt.tex.getTexArray());
 
                   // fillTriangle(pixels,(int)tt.vec3d.x,(int)tt.vec3d.y,(int)tt.vec3d2.x,(int)tt.vec3d2.y,
                   // (int)tt.vec3d3.x,(int)tt.vec3d3.y,tt.col);
@@ -496,16 +494,16 @@ public class GamePanel extends JPanel implements Runnable
 //                    drawTriangle(g2, tt.vec3d.x, tt.vec3d.y, tt.vec3d2.x,
 //                    tt.vec3d2.y, tt.vec3d3.x, tt.vec3d3.y
 //                   );
-//    //                
-//                    //TURN 3D VECTOR X AND Y COORDINATES INTO A POLYGON THAT WILL FILL EACH SURFACE
-//                    Polygon triangle = new Polygon();
-//                    triangle.addPoint((int)tt.vec3d.x,(int)tt.vec3d.y);
-//                    triangle.addPoint((int)tt.vec3d2.x,(int)tt.vec3d2.y);
-//                    triangle.addPoint((int)tt.vec3d3.x,(int)tt.vec3d3.y);
-//                    
-////    
-//                    g.setColor(tt.col);
-//                    g.fillPolygon(triangle);
+    //                
+                    //TURN 3D VECTOR X AND Y COORDINATES INTO A POLYGON THAT WILL FILL EACH SURFACE
+                    Polygon triangle = new Polygon();
+                    triangle.addPoint((int)tt.vec3d.x,(int)tt.vec3d.y);
+                    triangle.addPoint((int)tt.vec3d2.x,(int)tt.vec3d2.y);
+                    triangle.addPoint((int)tt.vec3d3.x,(int)tt.vec3d3.y);
+                    
+//    
+                    g.setColor(tt.col);
+                    g.fillPolygon(triangle);
                 }
                 
             }

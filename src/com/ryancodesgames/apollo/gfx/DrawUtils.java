@@ -1,12 +1,13 @@
 
 package com.ryancodesgames.apollo.gfx;
 
+import static com.ryancodesgames.apollo.gfx.ColorUtils.BLACK;
+import static com.ryancodesgames.apollo.gfx.ColorUtils.GRAY;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 
 public class DrawUtils 
 {
@@ -21,23 +22,7 @@ public class DrawUtils
    public static void texturedTriangle(Graphics2D g2, int x1, int y1, double u1, double v1, int x2, int y2, double
     u2, double v2, int x3, int y3, double u3, double v3, BufferedImage img, double visibility, boolean fog, int[] pix)
     {
-       // short[] doubleBufferData;
-      //  DataBuffer dest = img.getRaster().getDataBuffer();
-       // doubleBufferData = ((DataBufferUShort)dest).getData();
-     // PowerOf2Texture power = (PowerOf2Texture)createTexture(img);
-        
-        byte[] pixels = ((DataBufferByte)img.getRaster().getDataBuffer()).getData();
-        int pixelLength = 3;
-        int width = img.getWidth();
-        int height = img.getHeight();
-        boolean hasAlphaChannel = img.getAlphaRaster() != null;
-        pixelLength = 3;
-        if (hasAlphaChannel)
-        {
-            pixelLength = 4;
-        }
-        
-        
+ 
         if(y2 < y1)
         {
             int temp = y1;
@@ -166,7 +151,7 @@ public class DrawUtils
                      
                      if(fog)
                      {
-                         col = blend(background, col,(float)visibility);
+                        // col = blend(background, col,(float)visibility);
                          g2.setColor(col); 
                      }
                      
@@ -245,7 +230,7 @@ public class DrawUtils
 
                     if(fog)
                      {
-                         col = blend(background, col,(float)visibility);
+                        // col = blend(background, col,(float)visibility);
                          g2.setColor(col); 
                      }
                      
@@ -419,17 +404,14 @@ public class DrawUtils
                         int iu = (int) ((tex_u / tex_w) * tex.getWidth()) & tex.getWidthMask();
                         int iv = (int) ((tex_v / tex_w) * tex.getHeight()) & tex.getHeightMask();
                         int col = tex.getTexArray()[iu + (iv << tex.getWidthShift())];
+                        
+                        int backgroundColor = BLACK;
+                        
                         if(fog)
                         {
-                            
+                            col = blend(backgroundColor, col, (float)visibility);
                         }
-
-                        else
-                        {
-                           // g2.setColor(new Color(getRGB((int)Math.max(0,tex_u*(img.getWidth()-1)),(int)Math.max(0,tex_v*(img.getHeight()-1)), width, height, pixelLength, pixels, hasAlphaChannel)));
-                        }
-
-
+                      
                         draw(pix, j, i, col);
                         zBuffer[i * 800 + j] = Math.abs(tex_w);
                     }
@@ -507,18 +489,14 @@ public class DrawUtils
                         int iu = (int) ((tex_u / tex_w) * tex.getWidth()) & tex.getWidthMask();
                         int iv = (int) ((tex_v / tex_w) * tex.getHeight()) & tex.getHeightMask();
                         int col = tex.getTexArray()[iu + (iv << tex.getWidthShift())];
-
+                        
+                        int backgroundColor = BLACK;
+                        
                         if(fog)
                         {
-                            
+                            col = blend(backgroundColor, col, (float)visibility);
                         }
-
-                        else
-                        {
-                           // g2.setColor(new Color(getRGB((int)Math.max(0,tex_u*(img.getWidth()-1)),(int)Math.max(0,tex_v*(img.getHeight()-1)), width, height, pixelLength, pixels, hasAlphaChannel)));
-                        }
-
-
+                        
                         draw(pix, j, i, col);
                         zBuffer[i * 800 + j] = Math.abs(tex_w);
                     }
@@ -531,14 +509,14 @@ public class DrawUtils
     }
     
     
-    public static Color blend( Color c1, Color c2, float ratio ) 
+    public static int blend( int c1, int c2, float ratio ) 
     {
         if ( ratio > 1f ) ratio = 1f;
         else if ( ratio < 0f ) ratio = 0f;
         float iRatio = 1.0f - ratio;
 
-        int i1 = c1.getRGB();
-        int i2 = c2.getRGB();
+        int i1 = c1;
+        int i2 = c2;
 
         int a1 = (i1 >> 24 & 0xff);
         int r1 = ((i1 & 0xff0000) >> 16);
@@ -555,7 +533,7 @@ public class DrawUtils
         int g = (int)((g1 * iRatio) + (g2 * ratio));
         int b = (int)((b1 * iRatio) + (b2 * ratio));
 
-        return new Color( a << 24 | r << 16 | g << 8 | b );
+        return a << 24 | r << 16 | g << 8 | b ;
     }
     
    public static int getRGB(int x, int y, int width, int height, int pixelLength, byte[] pixels, boolean hasAlphaChannel)
@@ -611,9 +589,9 @@ public class DrawUtils
        }          
    }
    
-   public static void swap(int x, int y)
+   public static void swap(double x, double y)
    {
-       int temp = x;
+       double temp = x;
        x = y;
        y = temp;
    }
