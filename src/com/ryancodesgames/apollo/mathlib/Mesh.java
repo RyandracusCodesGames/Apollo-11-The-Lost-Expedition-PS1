@@ -20,6 +20,8 @@ public class Mesh
     
     public Texture tex;
     
+    public Transformation transform;
+    
     public Mesh(List<Triangle> tris, BufferedImage im)
     {
         this.triangles = tris;

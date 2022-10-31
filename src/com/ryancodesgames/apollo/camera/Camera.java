@@ -35,12 +35,41 @@ public class Camera
     
     public Matrix getViewMatrix()
     {
+        Matrix m = new Matrix();
+        vLookDir = m.multiplyMatrixVector(vTarget, matCameraRot);
+        vTarget = vTarget.addVector(cam, vLookDir);
+        
+        Matrix matCamera =  new Matrix(new double[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}});
+        matCamera = matCamera.pointAtMatrix(cam, vTarget, vUp);
+        
+        viewMatrix = matCamera.inverseMatrix(matCamera);
+        
         return viewMatrix;
+    }
+    
+    public void setLookDir(Vec3D lookDir)
+    {
+        this.vLookDir = lookDir;
+    }
+    
+    public void setUpDir(Vec3D upDir)
+    {
+        this.vUp = upDir;
+    }
+    
+    public void setTargDir(Vec3D targDir)
+    {
+        this.vTarget = targDir;
     }
     
     public void setForwardDirection(Vec3D vFoward)
     {
         cam = cam.addVector(cam, vFoward);
+    }
+    
+    public void setMatCameraRot(Matrix matCameraRot)
+    {
+        this.matCameraRot = matCameraRot;
     }
     
     public void setForwardDirectionBack(Vec3D vFoward)

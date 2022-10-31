@@ -6,7 +6,6 @@ import static com.ryancodesgames.apollo.ApolloPS1.getFrameWidth;
 import com.ryancodesgames.apollo.camera.Camera;
 import static com.ryancodesgames.apollo.gfx.ColorUtils.BLACK;
 import static com.ryancodesgames.apollo.gfx.DrawUtils.TexturedTriangle;
-import static com.ryancodesgames.apollo.gfx.DrawUtils.swap;
 import com.ryancodesgames.apollo.gfx.GraphicsContext;
 import com.ryancodesgames.apollo.gfx.ZBuffer;
 import com.ryancodesgames.apollo.input.KeyHandler;
@@ -16,6 +15,7 @@ import com.ryancodesgames.apollo.mathlib.Transformation;
 import com.ryancodesgames.apollo.mathlib.Triangle;
 import com.ryancodesgames.apollo.mathlib.Vec2D;
 import com.ryancodesgames.apollo.mathlib.Vec3D;
+import com.ryancodesgames.apollo.sound.Sound;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
@@ -56,6 +56,8 @@ public class GamePanel extends JPanel implements Runnable
     //COLLECTION OF TRIANGLES THAT DEFINE AN OBJECT IN 3D SPACE
     Mesh mesh = new Mesh();
     Mesh meshCube;
+    //CLASS THAT HANDLES SOUND
+    Sound sound = new Sound();
     //ANGLE TO ROTATE OBJECTS AROUND
     double fTheta;
     //ROTATION AROUND Y-AXIS FOR CAMERA
@@ -482,10 +484,10 @@ public class GamePanel extends JPanel implements Runnable
 //                   tt.vec2d2.u, tt.vec2d2.v,(int)tt.vec3d3.x,(int)tt.vec3d3.y, tt.vec2d3.u, tt.vec2d3.v,
 //                    meshCube.img, visibility, false, gc.getPixels());
                         
-//                    TexturedTriangle(g2, (int)tt.vec3d.x,(int)tt.vec3d.y, tt.vec2d.u, tt.vec2d.v,tt.vec2d.w,
-//                            (int)tt.vec3d2.x,(int)tt.vec3d2.y, tt.vec2d2.u, tt.vec2d2.v, tt.vec2d2.w,
-//                            (int)tt.vec3d3.x,(int)tt.vec3d3.y, tt.vec2d3.u, tt.vec2d3.v, tt.vec2d3.w,
-//                    tt.tex,visibility, false, pixels, zBuffer.getZBuffer(), tt.tex.getTexArray());
+                    TexturedTriangle(g2, (int)tt.vec3d.x,(int)tt.vec3d.y, tt.vec2d.u, tt.vec2d.v,tt.vec2d.w,
+                            (int)tt.vec3d2.x,(int)tt.vec3d2.y, tt.vec2d2.u, tt.vec2d2.v, tt.vec2d2.w,
+                            (int)tt.vec3d3.x,(int)tt.vec3d3.y, tt.vec2d3.u, tt.vec2d3.v, tt.vec2d3.w,
+                    tt.tex,visibility, false, pixels, zBuffer.getZBuffer(), tt.tex.getTexArray());
 
                   // fillTriangle(pixels,(int)tt.vec3d.x,(int)tt.vec3d.y,(int)tt.vec3d2.x,(int)tt.vec3d2.y,
                   // (int)tt.vec3d3.x,(int)tt.vec3d3.y,tt.col);
@@ -494,16 +496,16 @@ public class GamePanel extends JPanel implements Runnable
 //                    drawTriangle(g2, tt.vec3d.x, tt.vec3d.y, tt.vec3d2.x,
 //                    tt.vec3d2.y, tt.vec3d3.x, tt.vec3d3.y
 //                   );
-    //                
-                    //TURN 3D VECTOR X AND Y COORDINATES INTO A POLYGON THAT WILL FILL EACH SURFACE
-                    Polygon triangle = new Polygon();
-                    triangle.addPoint((int)tt.vec3d.x,(int)tt.vec3d.y);
-                    triangle.addPoint((int)tt.vec3d2.x,(int)tt.vec3d2.y);
-                    triangle.addPoint((int)tt.vec3d3.x,(int)tt.vec3d3.y);
-                    
-//    
-                    g.setColor(tt.col);
-                    g.fillPolygon(triangle);
+//    //                
+//                    //TURN 3D VECTOR X AND Y COORDINATES INTO A POLYGON THAT WILL FILL EACH SURFACE
+//                    Polygon triangle = new Polygon();
+//                    triangle.addPoint((int)tt.vec3d.x,(int)tt.vec3d.y);
+//                    triangle.addPoint((int)tt.vec3d2.x,(int)tt.vec3d2.y);
+//                    triangle.addPoint((int)tt.vec3d3.x,(int)tt.vec3d3.y);
+//                    
+////    
+//                    g.setColor(tt.col);
+//                    g.fillPolygon(triangle);
                 }
                 
             }
@@ -519,6 +521,25 @@ public class GamePanel extends JPanel implements Runnable
      @Override
     public boolean imageUpdate(Image image, int a, int b, int c, int d, int e) {
         return true;
+    }
+    
+    //THIS FUNCTION HANDLES THEME MUSIC MEANT TO LOOP OVER A PERIOD OF TIME
+    public void setSound(int i)
+    {
+        sound.setFile(i);
+        sound.play();
+        sound.loop();
+    }
+    
+    //FUNCTION USED TO PLAY A SHORT SOUND
+    public void play()
+    {
+        sound.play();
+    }
+    
+    public void stop()
+    {
+        sound.stop();
     }
 
 }
