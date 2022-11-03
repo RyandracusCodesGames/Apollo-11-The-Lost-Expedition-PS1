@@ -30,21 +30,33 @@ public class PolygonGroup
         return polygon.get(i);
     }
     
+    public int getIterator()
+    {
+        return iteratorIndex;
+    }
+    
     public List<Mesh> getPolygonGroup()
     {
         return polygon;
     }
     
-    public int increment()
+    public void increment()
     {
-        return iteratorIndex++;
+        if(!hasNext())
+        {
+            resetIterator();
+        }
+        else
+        {
+            iteratorIndex++;
+        }
     }
     public void resetIterator()
     {
         if(iteratorIndex >= polygon.size())
         {
             iteratorIndex = 0;
-        }     
+        }
     }
     
     public boolean hasNext()
