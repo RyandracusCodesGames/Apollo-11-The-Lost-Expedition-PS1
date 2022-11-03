@@ -27,11 +27,11 @@ public class Rasterizer
     private Camera camera;
     private Vec3D vLookDir;
     private Matrix matProj;
-    private double visibility;
     private Graphics2D g2;
     private int[] pixels;
     private ZBuffer zBuffer;
     private GraphicsContext gc;
+    private int triangleCount;
     
     public Rasterizer(PolygonGroup poly, Camera camera, Matrix matProj,Vec3D vLookDir, ZBuffer zBuffer, Graphics2D g2, int[] pixels)
     {
@@ -50,7 +50,7 @@ public class Rasterizer
         
        for(Mesh mesh: poly.getPolygonGroup())
        {
-
+           triangleCount = 0;
            Vec3D vUp = new Vec3D(0,1,0);
            Vec3D vTarget = new Vec3D(0,0,1);
            Matrix matCameraRotated = new Matrix(new double[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}});
@@ -272,9 +272,16 @@ public class Rasterizer
 ////    
 //                    g.setColor(tt.col);
 //                    g.fillPolygon(triangle);
+
+                      triangleCount++;
                 }
                 
             }
        }
+    }
+    
+    public int getTriangleCount()
+    {
+        return triangleCount;
     }
 }

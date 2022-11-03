@@ -18,6 +18,8 @@ import com.ryancodesgames.apollo.mathlib.Vec2D;
 import com.ryancodesgames.apollo.mathlib.Vec3D;
 import com.ryancodesgames.apollo.renderer.Rasterizer;
 import com.ryancodesgames.apollo.sound.Sound;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
@@ -311,6 +313,16 @@ public class GamePanel extends JPanel implements Runnable
          mImageProducer.newPixels();            
         // draw it on panel     
         g2.drawImage(this.imageBuffer, 0, 0, this);
+        
+        g2.setColor(Color.green);
+        g2.setFont(new Font("Arial", Font.BOLD, 20));
+        g2.drawString("Coordinates:", 10, 50);
+        g2.drawString("X:"+" "+String.valueOf(vCamera.getCamera().x), 10, 70);
+        g2.drawString("Y:"+" "+String.valueOf(vCamera.getCamera().y), 10, 90);
+        g2.drawString("Z:"+" "+String.valueOf(vCamera.getCamera().z), 10, 110);
+        g2.drawString("Triangles:"+" "+String.valueOf(renderer.getTriangleCount()), 10, 150);
+        g2.drawString("Textured = TRUE", 10, 180);
+        g2.drawString("Yaw:"+" "+String.valueOf(fYaw), 10, 210);
             
         g.dispose();
     }
