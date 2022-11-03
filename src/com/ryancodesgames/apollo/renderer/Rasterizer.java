@@ -26,32 +26,31 @@ public class Rasterizer
     private PolygonGroup poly = new PolygonGroup();
     private Camera camera;
     private Vec3D vLookDir;
-    private Matrix matWorld;
-    private Matrix matView;
     private Matrix matProj;
     private double visibility;
+    private Graphics2D g2;
     private int[] pixels;
     private ZBuffer zBuffer;
     private GraphicsContext gc;
     
-    public Rasterizer(PolygonGroup poly, Camera camera, Matrix matWorld, Matrix matView, Matrix matProj,Vec3D vLookDir, ZBuffer zBuffer, int[] pixels)
+    public Rasterizer(PolygonGroup poly, Camera camera, Matrix matProj,Vec3D vLookDir, ZBuffer zBuffer, Graphics2D g2, int[] pixels)
     {
         this.poly = poly;
         this.camera = camera;
-        this.matWorld = matWorld;
-        this.matView = matView;
         this.matProj = matProj;
         this.vLookDir = vLookDir;
         this.zBuffer = zBuffer;
+        this.g2 = g2;
         this.pixels = pixels;
     }
  
-    public void draw(Graphics2D g2)
+    public void draw()
     {
        Matrix m = new Matrix();
         
        for(Mesh mesh: poly.getPolygonGroup())
        {
+
            Vec3D vUp = new Vec3D(0,1,0);
            Vec3D vTarget = new Vec3D(0,0,1);
            Matrix matCameraRotated = new Matrix(new double[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}});
