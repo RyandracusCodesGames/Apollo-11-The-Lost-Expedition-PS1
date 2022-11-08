@@ -322,8 +322,7 @@ public class GamePanel extends JPanel implements Runnable
         g2.drawString("Z:"+" "+String.valueOf(vCamera.getCamera().z), 10, 110);
         g2.drawString("Triangles:"+" "+String.valueOf(renderer.getTriangleCount()), 10, 150);
         g2.drawString("Textured = TRUE", 10, 180);
-        g2.drawString("Yaw:"+" "+String.valueOf(fYaw), 10, 210);
-            
+
         g.dispose();
     }
     
