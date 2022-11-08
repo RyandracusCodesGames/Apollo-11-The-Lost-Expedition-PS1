@@ -1,6 +1,8 @@
 
 package com.ryancodesgames.apollo.mathlib;
 
+import java.util.List;
+
 
 public class Movement 
 {
@@ -10,6 +12,13 @@ public class Movement
     private double velocityAngleZ;
     
     private Vec3D velocityVector;
+    private List<Vec3D> targets;
+    private Vec3D origin;
+    
+    public Movement(Vec3D origin)
+    {
+        this.origin = origin;
+    }
 
     public void setVelocity(double f)
     {
@@ -23,6 +32,11 @@ public class Movement
         velocityVector = out.multiplyVector(direction, velocity);
         
         return velocityVector;
+    }
+    
+    public void setOrigin(Vec3D origin)
+    {
+        this.origin = origin;
     }
     
     public boolean isMoving()
@@ -51,6 +65,27 @@ public class Movement
         return direction;
     }
     
+    public double turnIdealYaw(float angleOffset)
+    {
+        return Math.atan2(-origin.z, origin.x) + ensureAngleWithinBounds(angleOffset);
+    }
+    
+    protected float ensureAngleWithinBounds(float angle)
+    {
+        if (angle < -Math.PI || angle > Math.PI) 
+        {
+            // transform range to (0 to 1)
+            double newAngle = (angle + Math.PI) / (2*Math.PI);
+            // validate range
+            newAngle = newAngle - Math.floor(newAngle);
+            // transform back to (-pi to pi) range
+            newAngle = Math.PI * (newAngle * 2 - 1);
+            return (float)newAngle;
+        }
+        return angle;
+    }
+
+    
     public double getVelocity()
     {
         return velocity;
@@ -59,5 +94,10 @@ public class Movement
     public Vec3D getVelocityVector()
     {
         return velocityVector;
+    }
+    
+    public Vec3D getOrigin()
+    {
+        return origin;
     }
 }
