@@ -4,8 +4,8 @@ package com.ryancodesgames.apollo;
 import static com.ryancodesgames.apollo.ApolloPS1.getFrameHeight;
 import static com.ryancodesgames.apollo.ApolloPS1.getFrameWidth;
 import com.ryancodesgames.apollo.camera.Camera;
+import com.ryancodesgames.apollo.gameobject.Terrain;
 import static com.ryancodesgames.apollo.gfx.ColorUtils.BLACK;
-import static com.ryancodesgames.apollo.gfx.DrawUtils.TexturedTriangle;
 import com.ryancodesgames.apollo.gfx.GraphicsContext;
 import com.ryancodesgames.apollo.gfx.ZBuffer;
 import com.ryancodesgames.apollo.input.KeyHandler;
@@ -14,7 +14,6 @@ import com.ryancodesgames.apollo.mathlib.Mesh;
 import com.ryancodesgames.apollo.mathlib.PolygonGroup;
 import com.ryancodesgames.apollo.mathlib.Transformation;
 import com.ryancodesgames.apollo.mathlib.Triangle;
-import com.ryancodesgames.apollo.mathlib.Vec2D;
 import com.ryancodesgames.apollo.mathlib.Vec3D;
 import com.ryancodesgames.apollo.renderer.Rasterizer;
 import com.ryancodesgames.apollo.sound.Sound;
@@ -31,9 +30,6 @@ import java.awt.image.ColorModel;
 import java.awt.image.MemoryImageSource;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -43,7 +39,7 @@ public class GamePanel extends JPanel implements Runnable
 {
     Thread gameThread;
     //FRAMES PER SECOND
-    double fps = 100;
+    double fps = 140;
     //CLASS THAT HANDLES KEYBOARD USER INPUT
     KeyHandler keyH = new KeyHandler();
     //SIZE OF WINDOW
@@ -61,6 +57,8 @@ public class GamePanel extends JPanel implements Runnable
     Mesh mesh = new Mesh();
     Mesh meshCube;
     PolygonGroup polygon = new PolygonGroup();
+    //TERRAIN
+    Terrain moonTerrain = new Terrain();
     //CLASS THAT HANDLES SOUND
     Sound sound = new Sound();
     //ANGLE TO ROTATE OBJECTS AROUND
@@ -151,11 +149,29 @@ public class GamePanel extends JPanel implements Runnable
         List<Triangle> tris2 = new ArrayList<>();
         
         tris = mesh.ReadOBJFile("yes.txt", true);
-        tris2 = mesh.ReadOBJFile("lead.txt", true);
-
+        tris2 = mesh.ReadOBJFile("yes.txt", true);
+        
+        double scale = 45.100;
+        
+        for(Triangle t: tris2)
+        {
+            t.vec2d.u *= scale;
+            t.vec2d.v *= scale;
+            t.vec2d.w *= scale;
+            t.vec2d2.u *= scale;
+            t.vec2d2.v *= scale;
+            t.vec2d2.w *= scale;
+            t.vec2d3.u *= scale;
+            t.vec2d3.v *= scale;
+            t.vec2d3.w *= scale;
+        }
+        
+      
         meshCube = new Mesh(tris2, img);
         
-        polygon.addMesh(meshCube);
+        moonTerrain.setTerain(meshCube);
+
+        polygon.addMesh(moonTerrain.getTerrain());
        
 //         meshCube = new Mesh(Arrays.asList(
 //        new Triangle[]{
@@ -206,7 +222,7 @@ public class GamePanel extends JPanel implements Runnable
      {
         try
         {
-            img = ImageIO.read(getClass().getResource("/com/ryancodesgames/apollo/gfx/hh.png"));
+            img = ImageIO.read(getClass().getResource("/com/ryancodesgames/apollo/gfx/yess.jpg"));
         }
         catch(IOException e)
         {
@@ -238,7 +254,7 @@ public class GamePanel extends JPanel implements Runnable
         }
         
         Vec3D vFoward = new Vec3D(0,0,0);
-        vFoward = vFoward.multiplyVector(vLookDir, 1);
+        vFoward = vFoward.multiplyVector(vLookDir, 3);
         
         if(keyH.frontPressed)
         {

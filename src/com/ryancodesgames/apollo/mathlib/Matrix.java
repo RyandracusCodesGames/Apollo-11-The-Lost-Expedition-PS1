@@ -114,6 +114,18 @@ public class Matrix
          return mat;
     }
     
+    public Matrix scaleMatrix(double x, double y, double z)
+    {
+         Matrix mat = new Matrix(new double[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}});
+         
+         mat.matrix[0][0] = x;
+         mat.matrix[1][1] = y;
+         mat.matrix[2][2] = z;
+         mat.matrix[3][3] = 1.0;
+         
+         return mat;
+    }
+    
     public Matrix matrixMatrixMultiplication(Matrix m1, Matrix m2)
     {
         Matrix mat = new Matrix(new double[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}});

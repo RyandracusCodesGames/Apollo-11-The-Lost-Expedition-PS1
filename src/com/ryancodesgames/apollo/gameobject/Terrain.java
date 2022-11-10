@@ -5,11 +5,24 @@ import com.ryancodesgames.apollo.mathlib.Mesh;
 
 public class Terrain 
 {
-    public Mesh meshTerrain;
+    private Mesh meshTerrain;
     
     public Terrain(Mesh meshTerrain)
     {
         this.meshTerrain = meshTerrain;
     }
- 
+    
+    public Terrain(){
+        
+    }
+    
+    public void setTerain(Mesh mesh)
+    {
+        this.meshTerrain = mesh;
+    }
+   
+    public Mesh getTerrain()
+    {
+        return meshTerrain;
+    }
 }
