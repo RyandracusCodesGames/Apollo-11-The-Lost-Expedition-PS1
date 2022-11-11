@@ -44,7 +44,8 @@ public class ColorUtils
      * Number representing the BufferedImage color type that the ColorProcessor handles.
      */
     public static final byte COLOR_TYPE = BufferedImage.TYPE_INT_ARGB;
-    public int mix(int col, int col2)
+    
+    public static int mix(int col, int col2)
     {
         int i1 = col;
         int i2 = col2;
@@ -67,7 +68,7 @@ public class ColorUtils
         return a << 24 | r << 16 | g << 8 | b ;
     }
     
-    public int multiply(int col, int col2)
+    public static int multiply(int col, int col2)
     {
         int i1 = col;
         int i2 = col2;
@@ -90,7 +91,7 @@ public class ColorUtils
         return a << 24 | r << 16 | g << 8 | b ;
     }
     
-    public int blend(int col, int col2, float ratio)
+    public static int blend(int col, int col2, float ratio)
     {
         if ( ratio > 1f ) ratio = 1f;
         else if ( ratio < 0f ) ratio = 0f;

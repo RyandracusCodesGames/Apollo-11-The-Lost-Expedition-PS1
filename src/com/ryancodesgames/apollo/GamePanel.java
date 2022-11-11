@@ -6,6 +6,8 @@ import static com.ryancodesgames.apollo.ApolloPS1.getFrameWidth;
 import com.ryancodesgames.apollo.camera.Camera;
 import com.ryancodesgames.apollo.gameobject.Terrain;
 import static com.ryancodesgames.apollo.gfx.ColorUtils.BLACK;
+import static com.ryancodesgames.apollo.gfx.ColorUtils.GRAY;
+import static com.ryancodesgames.apollo.gfx.ColorUtils.blend;
 import com.ryancodesgames.apollo.gfx.GraphicsContext;
 import com.ryancodesgames.apollo.gfx.ZBuffer;
 import com.ryancodesgames.apollo.input.KeyHandler;
@@ -56,6 +58,7 @@ public class GamePanel extends JPanel implements Runnable
     //COLLECTION OF TRIANGLES THAT DEFINE AN OBJECT IN 3D SPACE
     Mesh mesh = new Mesh();
     Mesh meshCube;
+    Mesh meshTemple;
     PolygonGroup polygon = new PolygonGroup();
     //TERRAIN
     Terrain moonTerrain = new Terrain();
@@ -149,7 +152,7 @@ public class GamePanel extends JPanel implements Runnable
         List<Triangle> tris2 = new ArrayList<>();
         
         tris = mesh.ReadOBJFile("yes.txt", true);
-        tris2 = mesh.ReadOBJFile("yes.txt", true);
+        tris2 = mesh.ReadOBJFile("temple.txt", true);
         
         double scale = 45.100;
         
@@ -157,13 +160,10 @@ public class GamePanel extends JPanel implements Runnable
         {
             t.vec2d.u *= scale;
             t.vec2d.v *= scale;
-            t.vec2d.w *= scale;
             t.vec2d2.u *= scale;
             t.vec2d2.v *= scale;
-            t.vec2d2.w *= scale;
             t.vec2d3.u *= scale;
             t.vec2d3.v *= scale;
-            t.vec2d3.w *= scale;
         }
         
       
@@ -222,7 +222,7 @@ public class GamePanel extends JPanel implements Runnable
      {
         try
         {
-            img = ImageIO.read(getClass().getResource("/com/ryancodesgames/apollo/gfx/yess.jpg"));
+            img = ImageIO.read(getClass().getResource("/com/ryancodesgames/apollo/gfx/moon.png"));
         }
         catch(IOException e)
         {
