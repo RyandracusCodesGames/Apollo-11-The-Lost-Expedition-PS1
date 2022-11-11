@@ -47,15 +47,17 @@ public class Rasterizer
     public void draw()
     {
        Matrix m = new Matrix();
-        
+       
+       triangleCount = 0;
+
+       List<Triangle> vecTrianglesToRaster = new ArrayList<>();
+
        for(Mesh mesh: poly.getPolygonGroup())
        {
-           triangleCount = 0;
            Vec3D vUp = new Vec3D(0,1,0);
            Vec3D vTarget = new Vec3D(0,0,1);
            Matrix matCameraRotated = new Matrix(new double[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}});
            matCameraRotated = m.rotationMatrixY(mesh.transform.getRotAngleY());
-           vLookDir = m.multiplyMatrixVector(vTarget, matCameraRotated);
            vTarget = vTarget.addVector(camera.getCamera(), vLookDir);
 
            //USING THE INFORMATION PROVIDED ABOVE TO DEFIEN A CAMERA MATRIX
@@ -64,8 +66,6 @@ public class Rasterizer
 
            Matrix matView = new Matrix(new double[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}});
            matView = matView.inverseMatrix(matCamera);
-
-           List<Triangle> vecTrianglesToRaster = new ArrayList<>();
 
            Matrix matWorld = mesh.transform.getWorldMatrix();
             
@@ -233,7 +233,7 @@ public class Rasterizer
                     Vec3D v = new Vec3D(0,0,0);
 
                     double density = 0.0035;
-                    double gradient = 2.0;
+                    double gradient = 5.0;
 
                     Vec3D distFromCamera = new Vec3D(0,0,0);
                     distFromCamera = v.subtractVector(tt.vec3d, camera.getCamera());

@@ -119,6 +119,22 @@ public class Vec3D
         else return(Math.abs(in.z - in2.z) < err);
     }
     
+    public void scale(Vec3D in, double scale, boolean multiply)
+    {
+        if(multiply)
+        {
+            in.x *= scale;
+            in.y *= scale;
+            in.z *= scale;
+        }
+        else
+        {
+            in.x /= scale;
+            in.y /= scale;
+            in.z /= scale;
+        }
+    }
+    
      public Vec3D vectorIntersectPlane(Vec3D plane_p, Vec3D plane_n, Vec3D lineStart, Vec3D lineEnd, ExtraData tt)
     {
         plane_n = normalize(plane_n);

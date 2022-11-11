@@ -21,4 +21,10 @@ public class Vec2D
     {
         return new Vec2D(u, v);
     }
+    
+    public void scale(Vec2D in, double scale)
+    {
+        in.u *= scale;
+        in.v *= scale;
+    }
 }

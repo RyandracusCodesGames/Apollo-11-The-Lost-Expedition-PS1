@@ -4,10 +4,9 @@ package com.ryancodesgames.apollo;
 import static com.ryancodesgames.apollo.ApolloPS1.getFrameHeight;
 import static com.ryancodesgames.apollo.ApolloPS1.getFrameWidth;
 import com.ryancodesgames.apollo.camera.Camera;
+import com.ryancodesgames.apollo.gameobject.Cargo;
 import com.ryancodesgames.apollo.gameobject.Terrain;
 import static com.ryancodesgames.apollo.gfx.ColorUtils.BLACK;
-import static com.ryancodesgames.apollo.gfx.ColorUtils.GRAY;
-import static com.ryancodesgames.apollo.gfx.ColorUtils.blend;
 import com.ryancodesgames.apollo.gfx.GraphicsContext;
 import com.ryancodesgames.apollo.gfx.ZBuffer;
 import com.ryancodesgames.apollo.input.KeyHandler;
@@ -16,6 +15,7 @@ import com.ryancodesgames.apollo.mathlib.Mesh;
 import com.ryancodesgames.apollo.mathlib.PolygonGroup;
 import com.ryancodesgames.apollo.mathlib.Transformation;
 import com.ryancodesgames.apollo.mathlib.Triangle;
+import com.ryancodesgames.apollo.mathlib.Vec2D;
 import com.ryancodesgames.apollo.mathlib.Vec3D;
 import com.ryancodesgames.apollo.renderer.Rasterizer;
 import com.ryancodesgames.apollo.sound.Sound;
@@ -41,7 +41,7 @@ public class GamePanel extends JPanel implements Runnable
 {
     Thread gameThread;
     //FRAMES PER SECOND
-    double fps = 140;
+    double fps = 180;
     //CLASS THAT HANDLES KEYBOARD USER INPUT
     KeyHandler keyH = new KeyHandler();
     //SIZE OF WINDOW
@@ -58,10 +58,12 @@ public class GamePanel extends JPanel implements Runnable
     //COLLECTION OF TRIANGLES THAT DEFINE AN OBJECT IN 3D SPACE
     Mesh mesh = new Mesh();
     Mesh meshCube;
-    Mesh meshTemple;
+    Mesh meshEarth;
     PolygonGroup polygon = new PolygonGroup();
     //TERRAIN
     Terrain moonTerrain = new Terrain();
+    //CARGO
+    Cargo meshCargo, meshCargo2, meshCargo3, meshCargo4;
     //CLASS THAT HANDLES SOUND
     Sound sound = new Sound();
     //ANGLE TO ROTATE OBJECTS AROUND
@@ -81,7 +83,9 @@ public class GamePanel extends JPanel implements Runnable
     private Image imageBuffer;
     private MemoryImageSource mImageProducer;
     
-    BufferedImage img;
+    BufferedImage img, img2, img3, img4, img5, img6;
+    
+    double moveSpeed = 0.50;
     
     GraphicsContext gc = new GraphicsContext(pixels, cm,  imageBuffer, mImageProducer,
     getFrameWidth(), getFrameHeight()); 
@@ -146,54 +150,50 @@ public class GamePanel extends JPanel implements Runnable
     
     public void initializeMesh()
     {
+        Vec2D u = new Vec2D(0,0);
+        Vec3D v = new Vec3D(0,0,0);
+        
         getRGB();
         //LOCAL CACHE OF VERTICES  
         List<Triangle> tris = new ArrayList<>();
         List<Triangle> tris2 = new ArrayList<>();
         
-        tris = mesh.ReadOBJFile("yes.txt", true);
-        tris2 = mesh.ReadOBJFile("temple.txt", true);
+        tris = mesh.ReadOBJFile("earth.txt", true);
+        tris2 = mesh.ReadOBJFile("terrain.txt", true);
         
+        //SCALE TRANSFORMATION TO VERTICES BY A SET FACTOR
         double scale = 45.100;
         
         for(Triangle t: tris2)
         {
-            t.vec2d.u *= scale;
-            t.vec2d.v *= scale;
-            t.vec2d2.u *= scale;
-            t.vec2d2.v *= scale;
-            t.vec2d3.u *= scale;
-            t.vec2d3.v *= scale;
+            u.scale(t.vec2d, scale);
+            u.scale(t.vec2d2, scale);
+            u.scale(t.vec2d3, scale);
         }
         
+        for(Triangle t: tris)
+        {
+            v.scale(t.vec3d, scale*4, true);
+            v.scale(t.vec3d2, scale*4, true);
+            v.scale(t.vec3d3, scale*4, true);
+        }
       
         meshCube = new Mesh(tris2, img);
+        meshEarth = new Mesh(tris, img2);
+        meshCargo = new Cargo(1852, -50, 2660, 50, 50, 150,img3);
+        meshCargo2 = new Cargo(2002, -50, 2660, 50, 50, 150,img3);
         
         moonTerrain.setTerain(meshCube);
 
         polygon.addMesh(moonTerrain.getTerrain());
-       
-//         meshCube = new Mesh(Arrays.asList(
-//        new Triangle[]{
-//            //SOUTH
-//            new Triangle(new Vec3D(0,0,0), new Vec3D(0,1,0), new Vec3D(1,1,0), new Vec2D(0,0), new Vec2D(0,1), new Vec2D(1,1)),
-//            new Triangle(new Vec3D(0,0,0), new Vec3D(1,1,0), new Vec3D(1,0,0), new Vec2D(0,0), new Vec2D(1,1), new Vec2D(1,0)),
-//            //EAST
-//            new Triangle(new Vec3D(1,0,0), new Vec3D(1,1,0), new Vec3D(1,1,1), new Vec2D(0,0), new Vec2D(0,1), new Vec2D(1,1)),
-//            new Triangle(new Vec3D(1,0,0), new Vec3D(1,1,1), new Vec3D(1,0,1), new Vec2D(0,0), new Vec2D(1,1), new Vec2D(1,0)),
-//            //NORTH
-//            new Triangle(new Vec3D(1,0,1), new Vec3D(1,1,1), new Vec3D(0,1,1), new Vec2D(0,0), new Vec2D(0,1), new Vec2D(1,1)),
-//            new Triangle(new Vec3D(1,0,1), new Vec3D(0,1,1), new Vec3D(0,0,1), new Vec2D(0,0), new Vec2D(1,1), new Vec2D(1,0)),
-//            //WEST
-//            new Triangle(new Vec3D(0,0,1), new Vec3D(0,1,1), new Vec3D(0,1,0), new Vec2D(0,0), new Vec2D(0,1), new Vec2D(1,1)),
-//            new Triangle(new Vec3D(0,0,1), new Vec3D(0,1,0), new Vec3D(0,0,0), new Vec2D(0,0), new Vec2D(1,1), new Vec2D(1,0)),
-//            //TOP
-//            new Triangle(new Vec3D(0,1,0), new Vec3D(0,1,1), new Vec3D(1,1,1), new Vec2D(0,0), new Vec2D(0,1), new Vec2D(1,1)),
-//            new Triangle(new Vec3D(0,1,0), new Vec3D(1,1,1), new Vec3D(1,1,0), new Vec2D(0,0), new Vec2D(1,1), new Vec2D(1,0)),
-//            //BOTTOM
-//            new Triangle(new Vec3D(1,0,1), new Vec3D(0,0,1), new Vec3D(0,0,0), new Vec2D(0,0), new Vec2D(0,1), new Vec2D(1,1)),
-//            new Triangle(new Vec3D(1,0,1), new Vec3D(0,0,0), new Vec3D(1,0,0), new Vec2D(0,0), new Vec2D(1,1), new Vec2D(1,0))
-//        }));
+        polygon.addMesh(meshEarth);
+        polygon.addMesh(meshCargo.getCargo());
+        polygon.addMesh(meshCargo2.getCargo());
+        
+        //SET TRANSFORMATION DATA
+        meshCube.transform.setRotAngleZ(0);
+        meshCube.transform.setRotAngleX(0);
+        meshCube.transform.setTranslationMatrix(0, 0, 8);
 
     }
     
@@ -223,6 +223,8 @@ public class GamePanel extends JPanel implements Runnable
         try
         {
             img = ImageIO.read(getClass().getResource("/com/ryancodesgames/apollo/gfx/moon.png"));
+            img2 = ImageIO.read(getClass().getResource("/com/ryancodesgames/apollo/gfx/earthtex.png"));
+            img3 = ImageIO.read(getClass().getResource("/com/ryancodesgames/apollo/gfx/cargoatlas.png"));
         }
         catch(IOException e)
         {
@@ -235,22 +237,22 @@ public class GamePanel extends JPanel implements Runnable
     {
         if(keyH.rightPressed)
         {
-            vCamera.addCameraX(0.25);
+            vCamera.addCameraX(moveSpeed);
         }
         
         if(keyH.leftPressed)
         {
-            vCamera.subtractCameraX(0.25);
+            vCamera.subtractCameraX(moveSpeed);
         }
         
         if(keyH.downPressed)
         {
-            vCamera.addCameraY(0.25);
+            vCamera.addCameraY(moveSpeed);
         }
         
         if(keyH.upPressed)
         {
-            vCamera.subtractY(0.25);
+            vCamera.subtractY(moveSpeed);
         }
         
         Vec3D vFoward = new Vec3D(0,0,0);
@@ -300,13 +302,12 @@ public class GamePanel extends JPanel implements Runnable
 //        g.setColor(Color.black);
 //        g.fillRect(0, 0, frameWidth, frameHeight);
         
-        //fTheta += 0.02;
-        meshCube.transform = t;
-        //SET TRANSFORMATION DATA
-        meshCube.transform.setRotAngleZ(fTheta * 0.5);
-        meshCube.transform.setRotAngleX(fTheta);
-        meshCube.transform.setTranslationMatrix(0, 0, 8);
-        meshCube.transform.setRotAngleY(fYaw);
+        fTheta += 0.015;
+
+        meshEarth.transform.setRotAngleZ(fTheta * 0.5);
+        meshEarth.transform.setRotAngleX(fTheta);
+        meshEarth.transform.setTranslationMatrix(0, -1400, 24000);
+        meshEarth.transform.setRotAngleY(fTheta);
 
         Vec3D vUp = new Vec3D(0,1,0);
         Vec3D vTarget = new Vec3D(0,0,1);
@@ -338,6 +339,7 @@ public class GamePanel extends JPanel implements Runnable
         g2.drawString("Z:"+" "+String.valueOf(vCamera.getCamera().z), 10, 110);
         g2.drawString("Triangles:"+" "+String.valueOf(renderer.getTriangleCount()), 10, 150);
         g2.drawString("Textured = TRUE", 10, 180);
+        g2.drawString("Yaw:"+" "+String.format("%.4f", fYaw), 10, 210);
 
         g.dispose();
     }

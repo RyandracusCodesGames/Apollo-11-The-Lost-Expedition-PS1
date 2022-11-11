@@ -404,7 +404,7 @@ public class DrawUtils
                         int iu = (int) ((tex_u / tex_w) * tex.getWidth()) & tex.getWidthMask();
                         int iv = (int) ((tex_v / tex_w) * tex.getHeight()) & tex.getHeightMask();
                         int col = tex.getTexArray()[iu + (iv << tex.getWidthShift())];
-                        
+                                               
                         int backgroundColor = BLACK;
                         
                         if(fog)
@@ -484,20 +484,22 @@ public class DrawUtils
                      tex_u = (1.0 - t) * tex_su + t * tex_eu;
                      tex_v = (1.0 - t) * tex_sv + t * tex_ev;
                      tex_w = (1.0 - t) * tex_sw + t * tex_ew;
-                      if(Math.abs(tex_w) > zBuffer[i * 800 + j])
+                     
+                   if(Math.abs(tex_w) > zBuffer[i * 800 + j])
                     {
                         int iu = (int) ((tex_u / tex_w) * tex.getWidth()) & tex.getWidthMask();
                         int iv = (int) ((tex_v / tex_w) * tex.getHeight()) & tex.getHeightMask();
                         int col = tex.getTexArray()[iu + (iv << tex.getWidthShift())];
-                        
+                                               
                         int backgroundColor = BLACK;
                         
                         if(fog)
                         {
                             col = blend(backgroundColor, col, (float)visibility);
                         }
-                        
+
                         draw(pix, j, i, col);
+
                         zBuffer[i * 800 + j] = Math.abs(tex_w);
                     }
                      t += tstep;
@@ -535,30 +537,22 @@ public class DrawUtils
 
         return a << 24 | r << 16 | g << 8 | b ;
     }
-    
-   public static int getRGB(int x, int y, int width, int height, int pixelLength, byte[] pixels, boolean hasAlphaChannel)
-    {
-        int pos = (y * pixelLength * width) + (x * pixelLength);
 
-        int argb = -16777216; // 255 alpha
-        if (hasAlphaChannel)
-        {
-            argb = (((int) pixels[pos++] & 0xff) << 24); // alpha
-        }
-
-        argb += ((int) pixels[pos++] & 0xff); // blue
-        argb += (((int) pixels[pos++] & 0xff) << 8); // green
-        argb += (((int) pixels[pos++] & 0xff) << 16); // red
-        return argb;
-    }
-   
-  
    public static void draw(int[] pixels, int x, int y, int col)
    {
-       if(x >= 0 && y >= 0 && x <= 800 && y <= 600)
+       if(x >= 1 && y >= 0 && x <= 800-1 && y <= 600-1)
        {
            pixels[x + y * 800] = col;
        }
+   }
+   
+   public static int index(int x, int y)
+   {
+       if(x >= 1 && y >= 0 && x <= 800-1 && y <= 600-1)
+       {
+           return (x + y * 800);
+       }
+       return 0;  
    }
    
    public static void fill(int[] pixels, int width, int height, int col)
