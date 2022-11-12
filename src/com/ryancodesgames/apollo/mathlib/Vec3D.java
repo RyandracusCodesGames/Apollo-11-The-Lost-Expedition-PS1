@@ -48,14 +48,24 @@ public class Vec3D
     
     public double vectorLength(Vec3D in)
     {
-        return Math.sqrt(dotProduct(in, in));
+        return Q_rsqrt((float)dotProduct(in, in));
+    }
+    
+    public double Q_rsqrt(float x) 
+    {
+        float xhalf = 0.5f * x;
+        int i = Float.floatToIntBits( x );
+        i = 0x5f3759df - (i >> 1);
+        x = Float.intBitsToFloat( i );
+        x = x * (1.5f - (xhalf * x * x));
+        return x;
     }
     
     public Vec3D normalize(Vec3D in)
     {
         double l = vectorLength(in);
         
-        return new Vec3D(in.x / l, in.y / l, in.z / l);
+        return new Vec3D(in.x * l, in.y * l, in.z * l);
     }
     
     public Vec3D crossProduct(Vec3D in, Vec3D in2)

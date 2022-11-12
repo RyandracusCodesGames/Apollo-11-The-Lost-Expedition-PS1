@@ -540,7 +540,7 @@ public class DrawUtils
 
    public static void draw(int[] pixels, int x, int y, int col)
    {
-       if(x >= 1 && y >= 0 && x <= 800-1 && y <= 600-1)
+       if(x >= 0 && y >= 0 && x <= 800 && y <= 600)
        {
            pixels[x + y * 800] = col;
        }

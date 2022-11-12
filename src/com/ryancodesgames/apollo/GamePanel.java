@@ -280,7 +280,7 @@ public class GamePanel extends JPanel implements Runnable
             fYaw += 0.008;
         }
     }
-    
+
     public void paintComponent(Graphics g)
     {
         super.paintComponent(g);
@@ -305,7 +305,6 @@ public class GamePanel extends JPanel implements Runnable
 //        g.fillRect(0, 0, frameWidth, frameHeight);
         
         fTheta += 0.015;
-
         meshEarth.transform.setRotAngleZ(fTheta * 0.5);
         meshEarth.transform.setRotAngleX(fTheta);
         meshEarth.transform.setTranslationMatrix(0, -1400, 24000);
