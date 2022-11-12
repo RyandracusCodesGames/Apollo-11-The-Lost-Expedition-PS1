@@ -59,6 +59,7 @@ public class GamePanel extends JPanel implements Runnable
     Mesh mesh = new Mesh();
     Mesh meshCube;
     Mesh meshEarth;
+    Mesh meshPS1;
     PolygonGroup polygon = new PolygonGroup();
     //TERRAIN
     Terrain moonTerrain = new Terrain();
@@ -157,6 +158,7 @@ public class GamePanel extends JPanel implements Runnable
         //LOCAL CACHE OF VERTICES  
         List<Triangle> tris = new ArrayList<>();
         List<Triangle> tris2 = new ArrayList<>();
+        List<Triangle> tris3 = new ArrayList<>();
         
         tris = mesh.ReadOBJFile("earth.txt", true);
         tris2 = mesh.ReadOBJFile("terrain.txt", true);
