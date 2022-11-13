@@ -41,7 +41,7 @@ public class GamePanel extends JPanel implements Runnable
 {
     Thread gameThread;
     //FRAMES PER SECOND
-    double fps = 180;
+    double fps = 240;
     //CLASS THAT HANDLES KEYBOARD USER INPUT
     KeyHandler keyH = new KeyHandler();
     //SIZE OF WINDOW
@@ -60,6 +60,8 @@ public class GamePanel extends JPanel implements Runnable
     Mesh meshCube;
     Mesh meshEarth;
     Mesh meshPS1;
+    Mesh meshTemple;
+    Mesh meshBase;
     PolygonGroup polygon = new PolygonGroup();
     //TERRAIN
     Terrain moonTerrain = new Terrain();
@@ -159,18 +161,39 @@ public class GamePanel extends JPanel implements Runnable
         List<Triangle> tris = new ArrayList<>();
         List<Triangle> tris2 = new ArrayList<>();
         List<Triangle> tris3 = new ArrayList<>();
+        List<Triangle> tris4 = new ArrayList<>();
+        List<Triangle> tris5 = new ArrayList<>();
         
         tris = mesh.ReadOBJFile("earth.txt", true);
         tris2 = mesh.ReadOBJFile("terrain.txt", true);
+        tris3 = mesh.ReadOBJFile("temple.txt",true);
+        tris4 = mesh.ReadOBJFile("base.txt",true);
+        tris5 = mesh.ReadOBJFile("ps1logo2.txt",true);
         
         //SCALE TRANSFORMATION TO VERTICES BY A SET FACTOR
         double scale = 45.100;
+        
+        double scale2 = 10;
         
         for(Triangle t: tris2)
         {
             u.scale(t.vec2d, scale);
             u.scale(t.vec2d2, scale);
             u.scale(t.vec2d3, scale);
+        }
+        
+        for(Triangle t: tris3)
+        {
+            u.scale(t.vec2d, scale);
+            u.scale(t.vec2d2, scale);
+            u.scale(t.vec2d3, scale);
+        }
+        
+        for(Triangle t: tris4)
+        {
+            u.scale(t.vec2d, scale2);
+            u.scale(t.vec2d2, scale2);
+            u.scale(t.vec2d3, scale2);
         }
         
         for(Triangle t: tris)
@@ -182,20 +205,26 @@ public class GamePanel extends JPanel implements Runnable
       
         meshCube = new Mesh(tris2, img);
         meshEarth = new Mesh(tris, img2);
+        meshTemple = new Mesh(tris3, img4);
+        meshPS1 = new Mesh(tris5, img6);
         meshCargo = new Cargo(1852, -50, 2660, 50, 50, 150,img3);
         meshCargo2 = new Cargo(2002, -50, 2660, 50, 50, 150,img3);
+        meshBase = new Mesh(tris4, img5);
         
         moonTerrain.setTerain(meshCube);
 
         polygon.addMesh(moonTerrain.getTerrain());
         polygon.addMesh(meshEarth);
+        polygon.addMesh(meshTemple);
+        polygon.addMesh(meshBase);
+       // polygon.addMesh(meshPS1);
         polygon.addMesh(meshCargo.getCargo());
         polygon.addMesh(meshCargo2.getCargo());
         
         //SET TRANSFORMATION DATA
-        meshCube.transform.setRotAngleZ(0);
-        meshCube.transform.setRotAngleX(0);
-        meshCube.transform.setTranslationMatrix(0, 0, 8);
+        meshCube.transform.setTranslationMatrix(0, 0, 8);     
+        meshTemple.transform.setTranslationMatrix(-1955, -140, 2479);
+        meshBase.transform.setTranslationMatrix(2002, -85, 3314);
 
     }
     
@@ -227,6 +256,9 @@ public class GamePanel extends JPanel implements Runnable
             img = ImageIO.read(getClass().getResource("/com/ryancodesgames/apollo/gfx/moon.png"));
             img2 = ImageIO.read(getClass().getResource("/com/ryancodesgames/apollo/gfx/earthtex.png"));
             img3 = ImageIO.read(getClass().getResource("/com/ryancodesgames/apollo/gfx/cargoatlas.png"));
+            img4 = ImageIO.read(getClass().getResource("/com/ryancodesgames/apollo/gfx/temple.png"));
+            img5 = ImageIO.read(getClass().getResource("/com/ryancodesgames/apollo/gfx/base1.png"));
+            img6 = ImageIO.read(getClass().getResource("/com/ryancodesgames/apollo/gfx/ps1logo.png"));
         }
         catch(IOException e)
         {
@@ -272,12 +304,12 @@ public class GamePanel extends JPanel implements Runnable
         
         if(keyH.rightTurn)
         {
-            fYaw -= 0.008;
+            fYaw -= 0.006;
         }
         
         if(keyH.leftTurn)
         {
-            fYaw += 0.008;
+            fYaw += 0.006;
         }
     }
 
