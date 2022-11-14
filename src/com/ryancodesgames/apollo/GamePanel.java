@@ -325,7 +325,7 @@ public class GamePanel extends JPanel implements Runnable
             for (int y=0;y<600;y++) {
                 boolean found=false;
                 if (!found) {
-                    pi[x + y * frameWidth] = BLACK;
+                    pi[x + y * frameWidth] = BLACK;//blend(GRAY, WHITE, 0.4f);
                 }
             }
         }   

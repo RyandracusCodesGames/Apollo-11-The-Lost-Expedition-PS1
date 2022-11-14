@@ -48,7 +48,7 @@ public class Vec3D
     
     public double vectorLength(Vec3D in)
     {
-        return Q_rsqrt((float)dotProduct(in, in));
+        return Math.sqrt(dotProduct(in, in));
     }
     
     public double Q_rsqrt(float x) 
@@ -65,7 +65,7 @@ public class Vec3D
     {
         double l = vectorLength(in);
         
-        return new Vec3D(in.x * l, in.y * l, in.z * l);
+        return new Vec3D(in.x / l, in.y / l, in.z / l);
     }
     
     public Vec3D crossProduct(Vec3D in, Vec3D in2)

@@ -3,6 +3,8 @@ package com.ryancodesgames.apollo.gfx;
 
 import static com.ryancodesgames.apollo.gfx.ColorUtils.BLACK;
 import static com.ryancodesgames.apollo.gfx.ColorUtils.GRAY;
+import static com.ryancodesgames.apollo.gfx.ColorUtils.WHITE;
+import static com.ryancodesgames.apollo.gfx.ColorUtils.blend;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -405,7 +407,7 @@ public class DrawUtils
                         int iv = (int) ((tex_v / tex_w) * tex.getHeight()) & tex.getHeightMask();
                         int col = tex.getTexArray()[iu + (iv << tex.getWidthShift())];
                                                
-                        int backgroundColor = BLACK;
+                        int backgroundColor = blend(GRAY, WHITE, 0.4f);
                         
                         if(fog)
                         {
@@ -491,7 +493,7 @@ public class DrawUtils
                         int iv = (int) ((tex_v / tex_w) * tex.getHeight()) & tex.getHeightMask();
                         int col = tex.getTexArray()[iu + (iv << tex.getWidthShift())];
                                                
-                        int backgroundColor = BLACK;
+                        int backgroundColor = blend(GRAY, WHITE, 0.4f);
                         
                         if(fog)
                         {

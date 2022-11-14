@@ -230,30 +230,16 @@ public class Rasterizer
 
                 for(Triangle tt: listTriangles)
                 {
-                    Vec3D v = new Vec3D(0,0,0);
-
-                    double density = 0.0035;
-                    double gradient = 5.0;
-
-                    Vec3D distFromCamera = new Vec3D(0,0,0);
-                    distFromCamera = v.subtractVector(tt.vec3d, camera.getCamera());
-
-                    double distance = v.vectorLength(distFromCamera);
-
-                    double visibility = Math.exp(-Math.pow(distance*density,gradient));
-                    visibility = Math.min(Math.max(visibility, 0.0), 1.0);
-
-                    //tt.col = blend(backgroundColor, tt.col, (float)visibility);
-
-
+                    double d = Math.abs(tt.vec3d.z / tt.vec3d.w);
+                    d = d - Math.floor(d) + 0.07;
 //                   texturedTriangle(g2, (int)tt.vec3d.x,(int)tt.vec3d.y, tt.vec2d.u, tt.vec2d.v,(int)tt.vec3d2.x,(int)tt.vec3d2.y,
 //                   tt.vec2d2.u, tt.vec2d2.v,(int)tt.vec3d3.x,(int)tt.vec3d3.y, tt.vec2d3.u, tt.vec2d3.v,
 //                    meshCube.img, visibility, false, gc.getPixels());
-                        
+                    
                     TexturedTriangle(g2, (int)tt.vec3d.x,(int)tt.vec3d.y, tt.vec2d.u, tt.vec2d.v,tt.vec2d.w,
                             (int)tt.vec3d2.x,(int)tt.vec3d2.y, tt.vec2d2.u, tt.vec2d2.v, tt.vec2d2.w,
                             (int)tt.vec3d3.x,(int)tt.vec3d3.y, tt.vec2d3.u, tt.vec2d3.v, tt.vec2d3.w,
-                    tt.tex,visibility, false, pixels, zBuffer.getZBuffer(), tt.tex.getTexArray());
+                    tt.tex,d, false, pixels, zBuffer.getZBuffer(), tt.tex.getTexArray());
 
                   // fillTriangle(pixels,(int)tt.vec3d.x,(int)tt.vec3d.y,(int)tt.vec3d2.x,(int)tt.vec3d2.y,
                   // (int)tt.vec3d3.x,(int)tt.vec3d3.y,tt.col);
