@@ -230,16 +230,23 @@ public class Rasterizer
 
                 for(Triangle tt: listTriangles)
                 {
+                    //FORMULA FOR DEPTH CUE FOG IN RELATION TO DEPTH OF PARTICULAR PIXEL
+                    //FORMULA FOUND THANKS TO DAVID COLSON
+                    double maxFogDepth = 0.05;
+                    double minFogDepth = 0.003;
+                    
                     double d = Math.abs(tt.vec3d.z / tt.vec3d.w);
                     d = d - Math.floor(d) + 0.07;
+                    
+                    d = Math.min(Math.max(((maxFogDepth - d)/(minFogDepth - maxFogDepth)),0.0),1.0);
 //                   texturedTriangle(g2, (int)tt.vec3d.x,(int)tt.vec3d.y, tt.vec2d.u, tt.vec2d.v,(int)tt.vec3d2.x,(int)tt.vec3d2.y,
 //                   tt.vec2d2.u, tt.vec2d2.v,(int)tt.vec3d3.x,(int)tt.vec3d3.y, tt.vec2d3.u, tt.vec2d3.v,
-//                    meshCube.img, visibility, false, gc.getPixels());
+//                    meshCube.img, visibility, false, pixels);
                     
                     TexturedTriangle(g2, (int)tt.vec3d.x,(int)tt.vec3d.y, tt.vec2d.u, tt.vec2d.v,tt.vec2d.w,
                             (int)tt.vec3d2.x,(int)tt.vec3d2.y, tt.vec2d2.u, tt.vec2d2.v, tt.vec2d2.w,
                             (int)tt.vec3d3.x,(int)tt.vec3d3.y, tt.vec2d3.u, tt.vec2d3.v, tt.vec2d3.w,
-                    tt.tex,d, false, pixels, zBuffer.getZBuffer(), tt.tex.getTexArray());
+                    tt.tex,d, true, pixels, zBuffer.getZBuffer(), tt.tex.getTexArray());
 
                   // fillTriangle(pixels,(int)tt.vec3d.x,(int)tt.vec3d.y,(int)tt.vec3d2.x,(int)tt.vec3d2.y,
                   // (int)tt.vec3d3.x,(int)tt.vec3d3.y,tt.col);

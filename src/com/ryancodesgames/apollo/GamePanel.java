@@ -6,7 +6,9 @@ import static com.ryancodesgames.apollo.ApolloPS1.getFrameWidth;
 import com.ryancodesgames.apollo.camera.Camera;
 import com.ryancodesgames.apollo.gameobject.Cargo;
 import com.ryancodesgames.apollo.gameobject.Terrain;
-import static com.ryancodesgames.apollo.gfx.ColorUtils.BLACK;
+import static com.ryancodesgames.apollo.gfx.ColorUtils.GRAY;
+import static com.ryancodesgames.apollo.gfx.ColorUtils.WHITE;
+import static com.ryancodesgames.apollo.gfx.ColorUtils.blend;
 import com.ryancodesgames.apollo.gfx.GraphicsContext;
 import com.ryancodesgames.apollo.gfx.ZBuffer;
 import com.ryancodesgames.apollo.input.KeyHandler;
@@ -325,7 +327,7 @@ public class GamePanel extends JPanel implements Runnable
             for (int y=0;y<600;y++) {
                 boolean found=false;
                 if (!found) {
-                    pi[x + y * frameWidth] = BLACK;//blend(GRAY, WHITE, 0.4f);
+                    pi[x + y * frameWidth] = blend(GRAY, WHITE, 0.4f);
                 }
             }
         }   
