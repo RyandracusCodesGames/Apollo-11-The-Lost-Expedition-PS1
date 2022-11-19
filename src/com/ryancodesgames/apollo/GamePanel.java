@@ -21,6 +21,8 @@ import com.ryancodesgames.apollo.mathlib.Vec2D;
 import com.ryancodesgames.apollo.mathlib.Vec3D;
 import com.ryancodesgames.apollo.renderer.Rasterizer;
 import com.ryancodesgames.apollo.sound.Sound;
+import com.ryancodesgames.apollo.ui.Command;
+import com.ryancodesgames.apollo.ui.CommandHandler;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -28,6 +30,7 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -38,7 +41,6 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-
 public class GamePanel extends JPanel implements Runnable
 {
     Thread gameThread;
@@ -46,6 +48,10 @@ public class GamePanel extends JPanel implements Runnable
     double fps = 240;
     //CLASS THAT HANDLES KEYBOARD USER INPUT
     KeyHandler keyH = new KeyHandler();
+    //CLASS THAT HANDLES DEV COMMANDS
+    Rasterizer renderer;
+    Command cmd = new Command();
+    CommandHandler ch = new CommandHandler(this,cmd);
     //SIZE OF WINDOW
     int frameWidth = getFrameWidth();
     int frameHeight = getFrameHeight();
@@ -95,9 +101,21 @@ public class GamePanel extends JPanel implements Runnable
     GraphicsContext gc = new GraphicsContext(pixels, cm,  imageBuffer, mImageProducer,
     getFrameWidth(), getFrameHeight()); 
     
+    public final int commandState = 1;
+    
+    public final int gameState = 0;
+    
+    public int state = gameState;
+    
+    Rectangle rect = new Rectangle(0, 429, 400, 35);
+    public Rectangle cursor = new Rectangle(12, 435, 7, 18);
+    
+    public boolean fog;
+    
     public GamePanel()
     {   
         this.addKeyListener(keyH);
+        this.addKeyListener(ch);
         this.setFocusable(true);
         this.setDoubleBuffered(true);
         initializeMesh();
@@ -219,7 +237,7 @@ public class GamePanel extends JPanel implements Runnable
         polygon.addMesh(meshEarth);
         polygon.addMesh(meshTemple);
         polygon.addMesh(meshBase);
-       // polygon.addMesh(meshPS1);
+        //polygon.addMesh(meshPS1);
         polygon.addMesh(meshCargo.getCargo());
         polygon.addMesh(meshCargo2.getCargo());
         
@@ -234,8 +252,8 @@ public class GamePanel extends JPanel implements Runnable
     {
         cm = getCompatibleColorModel();
         
-        int width = 800;
-        int height = 600;
+        int width = frameWidth;
+        int height = frameHeight;
         
         int screenSize = width * height;
         
@@ -313,6 +331,7 @@ public class GamePanel extends JPanel implements Runnable
         {
             fYaw += 0.006;
         }
+      
     }
 
     public void paintComponent(Graphics g)
@@ -342,8 +361,7 @@ public class GamePanel extends JPanel implements Runnable
         meshEarth.transform.setRotAngleZ(fTheta * 0.5);
         meshEarth.transform.setRotAngleX(fTheta);
         meshEarth.transform.setTranslationMatrix(0, -1400, 24000);
-        meshEarth.transform.setRotAngleY(fTheta);
-
+  
         Vec3D vUp = new Vec3D(0,1,0);
         Vec3D vTarget = new Vec3D(0,0,1);
         Matrix matCameraRotated = new Matrix(new double[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}});
@@ -358,7 +376,7 @@ public class GamePanel extends JPanel implements Runnable
         Matrix matView = new Matrix(new double[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}});
         matView = matView.inverseMatrix(matCamera);
         
-        Rasterizer renderer = new Rasterizer(polygon, vCamera, matProj, vLookDir, zBuffer, g2, pixels);
+        renderer = new Rasterizer(polygon, vCamera, matProj, vLookDir, zBuffer, g2, pixels, fog);
         renderer.draw();
 
         // ask ImageProducer to update image
@@ -372,9 +390,34 @@ public class GamePanel extends JPanel implements Runnable
         g2.drawString("X:"+" "+String.valueOf(vCamera.getCamera().x), 10, 70);
         g2.drawString("Y:"+" "+String.valueOf(vCamera.getCamera().y), 10, 90);
         g2.drawString("Z:"+" "+String.valueOf(vCamera.getCamera().z), 10, 110);
-        g2.drawString("Triangles:"+" "+String.valueOf(renderer.getTriangleCount()), 10, 150);
+       // g2.drawString("Triangles:"+" "+String.valueOf(renderer.getTriangleCount()), 10, 150);
         g2.drawString("Textured = TRUE", 10, 180);
         g2.drawString("Yaw:"+" "+String.format("%.4f", fYaw), 10, 210);
+        
+        if(state == commandState)
+       {
+            Character[] s = cmd.getCommand().toArray(new Character[cmd.getCommand().size()]);
+            char[] com = new char[cmd.getCommand().size()];
+            
+            //System.out.println(renderer.getFog());
+
+            int size = cmd.getCommand().size();
+
+            for(int i = 0; i < size; i++)
+            {
+                com[i] = cmd.getCommand().get(i);
+            }
+            g2.setColor(Color.gray.darker());
+            g2.fillRect(rect.x, rect.y, rect.width, rect.height);
+
+            g2.setColor(Color.white);
+            g2.fillRect(cursor.x, cursor.y, cursor.width, cursor.height);
+
+            g2.setColor(Color.black);
+            g2.setFont(new Font("Arial",Font.BOLD,15));
+            g2.drawChars(com, 0, size, 10, 450);
+           
+       }
 
         g.dispose();
     }

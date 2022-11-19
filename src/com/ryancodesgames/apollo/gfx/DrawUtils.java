@@ -1,10 +1,10 @@
 
 package com.ryancodesgames.apollo.gfx;
 
-import static com.ryancodesgames.apollo.gfx.ColorUtils.BLACK;
+import static com.ryancodesgames.apollo.ApolloPS1.getFrameHeight;
+import static com.ryancodesgames.apollo.ApolloPS1.getFrameWidth;
 import static com.ryancodesgames.apollo.gfx.ColorUtils.GRAY;
 import static com.ryancodesgames.apollo.gfx.ColorUtils.WHITE;
-import static com.ryancodesgames.apollo.gfx.ColorUtils.blend;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -413,7 +413,7 @@ public class DrawUtils
                         {
                             col = blend(backgroundColor, col, (float)visibility);
                         }
-                      
+                
                         draw(pix, j, i, col);
                         zBuffer[i * 800 + j] = Math.abs(tex_w);
                     }

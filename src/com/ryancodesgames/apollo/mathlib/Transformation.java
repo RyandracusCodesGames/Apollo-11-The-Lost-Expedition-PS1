@@ -51,6 +51,7 @@ public class Transformation
         Matrix matWorld = new Matrix();
         matWorld = m.identityMatrix();
         matWorld = m.matrixMatrixMultiplication(matZ, matZX);
+        matWorld = m.matrixMatrixMultiplication(matWorld, matYaw);
         matWorld = m.matrixMatrixMultiplication(matWorld, getTranslationMatrix());
         
         return matWorld;
