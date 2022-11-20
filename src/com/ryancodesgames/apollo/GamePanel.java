@@ -49,7 +49,6 @@ public class GamePanel extends JPanel implements Runnable
     //CLASS THAT HANDLES KEYBOARD USER INPUT
     KeyHandler keyH = new KeyHandler();
     //CLASS THAT HANDLES DEV COMMANDS
-    Rasterizer renderer;
     Command cmd = new Command();
     CommandHandler ch = new CommandHandler(this,cmd);
     //SIZE OF WINDOW
@@ -111,6 +110,8 @@ public class GamePanel extends JPanel implements Runnable
     public Rectangle cursor = new Rectangle(12, 435, 7, 18);
     
     public boolean fog;
+    
+    public double intense = 0.055;
     
     public GamePanel()
     {   
@@ -289,49 +290,51 @@ public class GamePanel extends JPanel implements Runnable
     
     public void update()
     {
-        if(keyH.rightPressed)
+        if(state != commandState)
         {
-            vCamera.addCameraX(moveSpeed);
+            if(keyH.rightPressed)
+            {
+                vCamera.addCameraX(moveSpeed);
+            }
+
+            if(keyH.leftPressed)
+            {
+                vCamera.subtractCameraX(moveSpeed);
+            }
+
+            if(keyH.downPressed)
+            {
+                vCamera.addCameraY(moveSpeed);
+            }
+
+            if(keyH.upPressed)
+            {
+                vCamera.subtractY(moveSpeed);
+            }
+
+            Vec3D vFoward = new Vec3D(0,0,0);
+            vFoward = vFoward.multiplyVector(vLookDir, 3);
+
+            if(keyH.frontPressed)
+            {
+               vCamera.setForwardDirection(vFoward);
+            }
+
+            if(keyH.backPressed)
+            {
+               vCamera.setForwardDirectionBack(vFoward);
+            }
+
+            if(keyH.rightTurn)
+            {
+                fYaw -= 0.006;
+            }
+
+            if(keyH.leftTurn)
+            {
+                fYaw += 0.006;
+            }
         }
-        
-        if(keyH.leftPressed)
-        {
-            vCamera.subtractCameraX(moveSpeed);
-        }
-        
-        if(keyH.downPressed)
-        {
-            vCamera.addCameraY(moveSpeed);
-        }
-        
-        if(keyH.upPressed)
-        {
-            vCamera.subtractY(moveSpeed);
-        }
-        
-        Vec3D vFoward = new Vec3D(0,0,0);
-        vFoward = vFoward.multiplyVector(vLookDir, 3);
-        
-        if(keyH.frontPressed)
-        {
-           vCamera.setForwardDirection(vFoward);
-        }
-        
-        if(keyH.backPressed)
-        {
-           vCamera.setForwardDirectionBack(vFoward);
-        }
-        
-        if(keyH.rightTurn)
-        {
-            fYaw -= 0.006;
-        }
-        
-        if(keyH.leftTurn)
-        {
-            fYaw += 0.006;
-        }
-      
     }
 
     public void paintComponent(Graphics g)
@@ -376,7 +379,7 @@ public class GamePanel extends JPanel implements Runnable
         Matrix matView = new Matrix(new double[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}});
         matView = matView.inverseMatrix(matCamera);
         
-        renderer = new Rasterizer(polygon, vCamera, matProj, vLookDir, zBuffer, g2, pixels, fog);
+        Rasterizer renderer = new Rasterizer(polygon, vCamera, matProj, vLookDir, zBuffer, g2, pixels, fog, intense);
         renderer.draw();
 
         // ask ImageProducer to update image
@@ -390,7 +393,7 @@ public class GamePanel extends JPanel implements Runnable
         g2.drawString("X:"+" "+String.valueOf(vCamera.getCamera().x), 10, 70);
         g2.drawString("Y:"+" "+String.valueOf(vCamera.getCamera().y), 10, 90);
         g2.drawString("Z:"+" "+String.valueOf(vCamera.getCamera().z), 10, 110);
-       // g2.drawString("Triangles:"+" "+String.valueOf(renderer.getTriangleCount()), 10, 150);
+        g2.drawString("Triangles:"+" "+String.valueOf(renderer.getTriangleCount()), 10, 150);
         g2.drawString("Textured = TRUE", 10, 180);
         g2.drawString("Yaw:"+" "+String.format("%.4f", fYaw), 10, 210);
         
@@ -398,8 +401,6 @@ public class GamePanel extends JPanel implements Runnable
        {
             Character[] s = cmd.getCommand().toArray(new Character[cmd.getCommand().size()]);
             char[] com = new char[cmd.getCommand().size()];
-            
-            //System.out.println(renderer.getFog());
 
             int size = cmd.getCommand().size();
 

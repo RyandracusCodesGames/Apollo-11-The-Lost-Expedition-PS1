@@ -5,6 +5,7 @@ import com.ryancodesgames.apollo.GamePanel;
 import com.ryancodesgames.apollo.renderer.Rasterizer;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.regex.Pattern;
 
 public class CommandHandler implements KeyListener
 {
@@ -55,7 +56,7 @@ public class CommandHandler implements KeyListener
                 }
  
                 String readCommand = String.copyValueOf(com);
-                String[] split = readCommand.split("//s+");
+                String[] split = readCommand.split(Pattern.quote(" "));
                 
                 for(int i = 0; i < split.length; i++)
                 {
@@ -67,6 +68,9 @@ public class CommandHandler implements KeyListener
                             {
                                 case "FOGON":
                                 gp.fog = true;
+                                break;
+                                case "INTENSITY":
+                                gp.intense = Double.valueOf(split[i+1]);
                                 break;
                                 case "FOGOFF":
                                 gp.fog = false;

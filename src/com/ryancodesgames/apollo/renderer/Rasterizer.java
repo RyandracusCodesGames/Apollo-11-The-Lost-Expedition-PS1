@@ -33,8 +33,9 @@ public class Rasterizer
     private GraphicsContext gc;
     private int triangleCount;
     private boolean fog;
+    private double intensity;
     
-    public Rasterizer(PolygonGroup poly, Camera camera, Matrix matProj,Vec3D vLookDir, ZBuffer zBuffer, Graphics2D g2, int[] pixels, boolean fog)
+    public Rasterizer(PolygonGroup poly, Camera camera, Matrix matProj,Vec3D vLookDir, ZBuffer zBuffer, Graphics2D g2, int[] pixels, boolean fog, double intensity)
     {
         this.poly = poly;
         this.camera = camera;
@@ -44,6 +45,7 @@ public class Rasterizer
         this.g2 = g2;
         this.pixels = pixels;
         this.fog = fog;
+        this.intensity = intensity;
     }
  
     public void draw()
@@ -242,7 +244,7 @@ public class Rasterizer
                     double minFogDepth = 0.003;
                     
                     double d = Math.abs(tt.vec3d.z / tt.vec3d.w);
-                    d = d - Math.floor(d) + 0.055;
+                    d = d - Math.floor(d) + intensity;
                     
                     d = Math.min(Math.max(((maxFogDepth - d)/(minFogDepth - maxFogDepth)),0.0),1.0);
              
@@ -281,9 +283,18 @@ public class Rasterizer
        }
     }
     
-    
     public int getTriangleCount()
     {
         return triangleCount;
+    }
+    
+    public void setIntensity(double f)
+    {
+        this.intensity = f;
+    }
+    
+    public double getIntensity()
+    {
+        return intensity;
     }
 }
