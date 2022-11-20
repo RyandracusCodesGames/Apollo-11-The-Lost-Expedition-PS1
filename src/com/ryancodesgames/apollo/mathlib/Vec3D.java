@@ -79,6 +79,20 @@ public class Vec3D
         return out;
     }
     
+    public Vec3D barycenter(Vec3D p, Vec3D v1, Vec3D v2, Vec3D v3)
+    {
+        Vec3D ret;
+        
+        double d = (v2.y-v3.y) * (v1.x-v3.x) + (v3.x-v2.x) * (v1.y - v3.y);
+        double u = ((v2.y-v3.y) * (p.x-v3.x) + (v3.x-v2.x) * (p.y-v3.y)) / d;
+        double v = ((v3.y-v1.y) * (p.x-v3.x) + (v1.x-v3.x) * (p.y-v3.y)) / d;
+        double w = 1.0f - u - v;
+        
+        ret = new Vec3D(u, v, w);
+        
+        return ret;
+    }
+    
     public Vec3D distance(Vec3D pos, Vec3D target)
     {
         Vec3D distance = subtractVector(target, pos);

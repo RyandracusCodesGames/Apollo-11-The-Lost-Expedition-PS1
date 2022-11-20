@@ -5,6 +5,7 @@ import static com.ryancodesgames.apollo.ApolloPS1.getFrameHeight;
 import static com.ryancodesgames.apollo.ApolloPS1.getFrameWidth;
 import com.ryancodesgames.apollo.camera.Camera;
 import static com.ryancodesgames.apollo.gfx.DrawUtils.TexturedTriangle;
+import static com.ryancodesgames.apollo.gfx.DrawUtils.drawSurface;
 import com.ryancodesgames.apollo.gfx.GraphicsContext;
 import com.ryancodesgames.apollo.gfx.ZBuffer;
 import com.ryancodesgames.apollo.mathlib.Matrix;
@@ -247,16 +248,21 @@ public class Rasterizer
                     d = d - Math.floor(d) + intensity;
                     
                     d = Math.min(Math.max(((maxFogDepth - d)/(minFogDepth - maxFogDepth)),0.0),1.0);
-             
+      
 //                   texturedTriangle(g2, (int)tt.vec3d.x,(int)tt.vec3d.y, tt.vec2d.u, tt.vec2d.v,(int)tt.vec3d2.x,(int)tt.vec3d2.y,
 //                   tt.vec2d2.u, tt.vec2d2.v,(int)tt.vec3d3.x,(int)tt.vec3d3.y, tt.vec2d3.u, tt.vec2d3.v,
 //                    meshCube.img, visibility, false, pixels);
 
-                    
                     TexturedTriangle(g2, (int)tt.vec3d.x,(int)tt.vec3d.y, tt.vec2d.u, tt.vec2d.v,tt.vec2d.w,
-                            (int)tt.vec3d2.x,(int)tt.vec3d2.y, tt.vec2d2.u, tt.vec2d2.v, tt.vec2d2.w,
+                           (int)tt.vec3d2.x,(int)tt.vec3d2.y, tt.vec2d2.u, tt.vec2d2.v, tt.vec2d2.w,
                             (int)tt.vec3d3.x,(int)tt.vec3d3.y, tt.vec2d3.u, tt.vec2d3.v, tt.vec2d3.w,
                     tt.tex,d, fog, pixels, zBuffer.getZBuffer(), tt.tex.getTexArray());
+                    
+                    //drawSurface(pixels, tt.vec3d, tt.vec3d2, tt.vec3d3, tt.vec2d, tt.vec2d2, tt.vec2d3,
+                 //   tt.tex, zBuffer.getZBuffer());
+                    
+                   // DrawTriangle(pixels,(int)tt.vec3d.x,(int)tt.vec3d.y,(int)tt.vec3d2.x,(int)tt.vec3d2.y,
+                   // (int)tt.vec3d3.x,(int)tt.vec3d3.y, tt.col.getRGB());
 
                   // fillTriangle(pixels,(int)tt.vec3d.x,(int)tt.vec3d.y,(int)tt.vec3d2.x,(int)tt.vec3d2.y,
                   // (int)tt.vec3d3.x,(int)tt.vec3d3.y,tt.col);

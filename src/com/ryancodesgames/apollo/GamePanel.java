@@ -9,6 +9,7 @@ import com.ryancodesgames.apollo.gameobject.Terrain;
 import static com.ryancodesgames.apollo.gfx.ColorUtils.GRAY;
 import static com.ryancodesgames.apollo.gfx.ColorUtils.WHITE;
 import static com.ryancodesgames.apollo.gfx.ColorUtils.blend;
+import static com.ryancodesgames.apollo.gfx.DrawUtils.fill;
 import com.ryancodesgames.apollo.gfx.GraphicsContext;
 import com.ryancodesgames.apollo.gfx.ZBuffer;
 import com.ryancodesgames.apollo.input.KeyHandler;
@@ -278,7 +279,7 @@ public class GamePanel extends JPanel implements Runnable
             img2 = ImageIO.read(getClass().getResource("/com/ryancodesgames/apollo/gfx/earthtex.png"));
             img3 = ImageIO.read(getClass().getResource("/com/ryancodesgames/apollo/gfx/cargoatlas.png"));
             img4 = ImageIO.read(getClass().getResource("/com/ryancodesgames/apollo/gfx/temple.png"));
-            img5 = ImageIO.read(getClass().getResource("/com/ryancodesgames/apollo/gfx/base1.png"));
+            img5 = ImageIO.read(getClass().getResource("/com/ryancodesgames/apollo/gfx/yes.png"));
             img6 = ImageIO.read(getClass().getResource("/com/ryancodesgames/apollo/gfx/ps1logo.png"));
         }
         catch(IOException e)
@@ -342,17 +343,8 @@ public class GamePanel extends JPanel implements Runnable
         super.paintComponent(g);
         
         int[] pi = pixels; // this avoid crash when resizing
-        //a=h/w
-        final int h= 600;
         if(pi.length != 800 * 600) return;        
-        for (int x=0;x<800;x++) {
-            for (int y=0;y<600;y++) {
-                boolean found=false;
-                if (!found) {
-                    pi[x + y * frameWidth] = blend(GRAY, WHITE, 0.4f);
-                }
-            }
-        }   
+        fill(pixels, frameWidth, frameHeight, blend(GRAY, WHITE, 0.4f));
         
         Graphics2D g2 = (Graphics2D)g;
 
@@ -381,6 +373,7 @@ public class GamePanel extends JPanel implements Runnable
         
         Rasterizer renderer = new Rasterizer(polygon, vCamera, matProj, vLookDir, zBuffer, g2, pixels, fog, intense);
         renderer.draw();
+        
 
         // ask ImageProducer to update image
          mImageProducer.newPixels();            
@@ -408,6 +401,7 @@ public class GamePanel extends JPanel implements Runnable
             {
                 com[i] = cmd.getCommand().get(i);
             }
+            
             g2.setColor(Color.gray.darker());
             g2.fillRect(rect.x, rect.y, rect.width, rect.height);
 
