@@ -100,18 +100,20 @@ public class GamePanel extends JPanel implements Runnable
     
     GraphicsContext gc = new GraphicsContext(pixels, cm,  imageBuffer, mImageProducer,
     getFrameWidth(), getFrameHeight()); 
-    
+    //STATES FOR THE GAME
     public final int commandState = 1;
-    
     public final int gameState = 0;
-    
     public int state = gameState;
-    
+    //STATES FOR THE DRAWING ROUTINES
+    public final int WIREFRAME = 0;
+    public final int SURFACE = 1;
+    public final int TEXTURED = 2;
+    public int drawState = 2;
+    //RECTANGLES FOR COMMAND LINE GUI INTERFACE
     Rectangle rect = new Rectangle(0, 429, 400, 35);
     public Rectangle cursor = new Rectangle(12, 435, 7, 18);
-    
     public boolean fog;
-    
+    //FOG INTENSITY
     public double intense = 0.055;
     
     public GamePanel()
@@ -371,7 +373,7 @@ public class GamePanel extends JPanel implements Runnable
         Matrix matView = new Matrix(new double[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}});
         matView = matView.inverseMatrix(matCamera);
         
-        Rasterizer renderer = new Rasterizer(polygon, vCamera, matProj, vLookDir, zBuffer, g2, pixels, fog, intense);
+        Rasterizer renderer = new Rasterizer(polygon, vCamera, matProj, vLookDir, zBuffer, g2, pixels, fog, intense, drawState);
         renderer.draw();
         
 

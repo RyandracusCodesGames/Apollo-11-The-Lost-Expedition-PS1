@@ -4,8 +4,10 @@ package com.ryancodesgames.apollo.renderer;
 import static com.ryancodesgames.apollo.ApolloPS1.getFrameHeight;
 import static com.ryancodesgames.apollo.ApolloPS1.getFrameWidth;
 import com.ryancodesgames.apollo.camera.Camera;
+import static com.ryancodesgames.apollo.gfx.ColorUtils.BLACK;
+import static com.ryancodesgames.apollo.gfx.DrawUtils.DrawTriangle;
 import static com.ryancodesgames.apollo.gfx.DrawUtils.TexturedTriangle;
-import static com.ryancodesgames.apollo.gfx.DrawUtils.drawSurface;
+import static com.ryancodesgames.apollo.gfx.DrawUtils.fillTriangle;
 import com.ryancodesgames.apollo.gfx.GraphicsContext;
 import com.ryancodesgames.apollo.gfx.ZBuffer;
 import com.ryancodesgames.apollo.mathlib.Matrix;
@@ -35,8 +37,9 @@ public class Rasterizer
     private int triangleCount;
     private boolean fog;
     private double intensity;
+    private int drawState;
     
-    public Rasterizer(PolygonGroup poly, Camera camera, Matrix matProj,Vec3D vLookDir, ZBuffer zBuffer, Graphics2D g2, int[] pixels, boolean fog, double intensity)
+    public Rasterizer(PolygonGroup poly, Camera camera, Matrix matProj,Vec3D vLookDir, ZBuffer zBuffer, Graphics2D g2, int[] pixels, boolean fog, double intensity, int drawState)
     {
         this.poly = poly;
         this.camera = camera;
@@ -47,6 +50,7 @@ public class Rasterizer
         this.pixels = pixels;
         this.fog = fog;
         this.intensity = intensity;
+        this.drawState = drawState;
     }
  
     public void draw()
@@ -252,35 +256,31 @@ public class Rasterizer
 //                   texturedTriangle(g2, (int)tt.vec3d.x,(int)tt.vec3d.y, tt.vec2d.u, tt.vec2d.v,(int)tt.vec3d2.x,(int)tt.vec3d2.y,
 //                   tt.vec2d2.u, tt.vec2d2.v,(int)tt.vec3d3.x,(int)tt.vec3d3.y, tt.vec2d3.u, tt.vec2d3.v,
 //                    meshCube.img, visibility, false, pixels);
-
-                    TexturedTriangle(g2, (int)tt.vec3d.x,(int)tt.vec3d.y, tt.vec2d.u, tt.vec2d.v,tt.vec2d.w,
+                     if(drawState == 2)
+                     {
+                          TexturedTriangle(g2, (int)tt.vec3d.x,(int)tt.vec3d.y, tt.vec2d.u, tt.vec2d.v,tt.vec2d.w,
                            (int)tt.vec3d2.x,(int)tt.vec3d2.y, tt.vec2d2.u, tt.vec2d2.v, tt.vec2d2.w,
                             (int)tt.vec3d3.x,(int)tt.vec3d3.y, tt.vec2d3.u, tt.vec2d3.v, tt.vec2d3.w,
-                    tt.tex,d, fog, pixels, zBuffer.getZBuffer(), tt.tex.getTexArray());
+                        tt.tex,d, fog, pixels, zBuffer.getZBuffer(), tt.tex.getTexArray());
+                     }
+                     else if(drawState == 1)
+                     {
+                        fillTriangle(pixels,(int)tt.vec3d.x,(int)tt.vec3d.y,(int)tt.vec3d2.x,(int)tt.vec3d2.y,
+                        (int)tt.vec3d3.x,(int)tt.vec3d3.y,(int)tt.col.getRGB());
+                     }
+                     else
+                     {
+                         DrawTriangle(pixels,(int)tt.vec3d.x,(int)tt.vec3d.y,(int)tt.vec3d2.x,(int)tt.vec3d2.y,
+                        (int)tt.vec3d3.x,(int)tt.vec3d3.y, BLACK);
+                     }
                     
+                   
                     //drawSurface(pixels, tt.vec3d, tt.vec3d2, tt.vec3d3, tt.vec2d, tt.vec2d2, tt.vec2d3,
                  //   tt.tex, zBuffer.getZBuffer());
-                    
-                   // DrawTriangle(pixels,(int)tt.vec3d.x,(int)tt.vec3d.y,(int)tt.vec3d2.x,(int)tt.vec3d2.y,
-                   // (int)tt.vec3d3.x,(int)tt.vec3d3.y, tt.col.getRGB());
-
-                  // fillTriangle(pixels,(int)tt.vec3d.x,(int)tt.vec3d.y,(int)tt.vec3d2.x,(int)tt.vec3d2.y,
-                  // (int)tt.vec3d3.x,(int)tt.vec3d3.y,tt.col);
-
-//                    g2.setColor(Color.black); 
-//                    drawTriangle(g2, tt.vec3d.x, tt.vec3d.y, tt.vec3d2.x,
-//                    tt.vec3d2.y, tt.vec3d3.x, tt.vec3d3.y
-//                   );
+     
 //    //                
 //                    //TURN 3D VECTOR X AND Y COORDINATES INTO A POLYGON THAT WILL FILL EACH SURFACE
-//                    Polygon triangle = new Polygon();
-//                    triangle.addPoint((int)tt.vec3d.x,(int)tt.vec3d.y);
-//                    triangle.addPoint((int)tt.vec3d2.x,(int)tt.vec3d2.y);
-//                    triangle.addPoint((int)tt.vec3d3.x,(int)tt.vec3d3.y);
-//                    
-////    
-//                    g.setColor(tt.col);
-//                    g.fillPolygon(triangle);
+//                   
 
                       triangleCount++;
                 }

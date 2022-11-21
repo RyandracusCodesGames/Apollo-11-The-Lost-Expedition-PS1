@@ -75,6 +75,15 @@ public class CommandHandler implements KeyListener
                                 case "FOGOFF":
                                 gp.fog = false;
                                 break;
+                                case "WIREFRAME":
+                                gp.drawState = gp.WIREFRAME;
+                                break;
+                                case "SURFACE":
+                                gp.drawState = gp.SURFACE;
+                                break;
+                                case "TEXTURED":
+                                gp.drawState = gp.TEXTURED;
+                                break;
                             }
                         }
                     }
