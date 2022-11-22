@@ -1,16 +1,19 @@
 
 package com.ryancodesgames.apollo.gfx;
 
+import static com.ryancodesgames.apollo.ApolloPS1.getFrameHeight;
+import static com.ryancodesgames.apollo.ApolloPS1.getFrameWidth;
 import static com.ryancodesgames.apollo.gfx.ColorUtils.GRAY;
 import static com.ryancodesgames.apollo.gfx.ColorUtils.WHITE;
 import static com.ryancodesgames.apollo.gfx.ColorUtils.blend;
-import com.ryancodesgames.apollo.mathlib.Vec2D;
-import com.ryancodesgames.apollo.mathlib.Vec3D;
+import static com.ryancodesgames.apollo.gfx.ColorUtils.dotColor;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
+import java.util.stream.IntStream;
 
 public class DrawUtils 
 {
@@ -260,7 +263,7 @@ public class DrawUtils
     }
     
     public static void TexturedTriangle(Graphics2D g2, int x1, int y1, double u1, double v1, double w1, int x2, int y2, double
-    u2, double v2, double w2, int x3, int y3, double u3, double v3, double w3,Texture tex, double visibility, boolean fog, int[] pix, double[] zBuffer, int[] texArray)
+    u2, double v2, double w2, int x3, int y3, double u3, double v3, double w3,Texture tex, double visibility, boolean fog, boolean directionLighting,int[] pix, double[] zBuffer, int[] texArray, double dp)
     {
         
         if(y2 < y1)
@@ -409,7 +412,7 @@ public class DrawUtils
                     tex_v = (1.0 - t) * tex_sv + t * tex_ev;
                     tex_w = (1.0 - t) * tex_sw + t * tex_ew;
 
-                    if(Math.abs(tex_w) > zBuffer[i * 800 + j])
+                    if(Math.abs(tex_w) > zBuffer[i * getFrameWidth() + j])
                     {
                         int iu = (int) ((tex_u / tex_w) * tex.getWidth()) & tex.getWidthMask();
                         int iv = (int) ((tex_v / tex_w) * tex.getHeight()) & tex.getHeightMask();
@@ -421,9 +424,14 @@ public class DrawUtils
                         {
                             col = blend(backgroundColor, col, (float)visibility);
                         }
-                
+                        
+                        if(directionLighting)
+                        {
+                             col = dotColor(col, dp);
+                        }
+  
                         draw(pix, j, i, col);
-                        zBuffer[i * 800 + j] = Math.abs(tex_w);
+                        zBuffer[i * getFrameWidth() + j] = Math.abs(tex_w);
                     }
                         
                     t += tstep;
@@ -495,7 +503,7 @@ public class DrawUtils
                      tex_v = (1.0 - t) * tex_sv + t * tex_ev;
                      tex_w = (1.0 - t) * tex_sw + t * tex_ew;
                      
-                   if(Math.abs(tex_w) > zBuffer[i * 800 + j])
+                   if(Math.abs(tex_w) > zBuffer[i * getFrameWidth() + j])
                     {
                         int iu = (int) ((tex_u / tex_w) * tex.getWidth()) & tex.getWidthMask();
                         int iv = (int) ((tex_v / tex_w) * tex.getHeight()) & tex.getHeightMask();
@@ -507,10 +515,15 @@ public class DrawUtils
                         {
                             col = blend(backgroundColor, col, (float)visibility);
                         }
+                        
+                        if(directionLighting)
+                        {
+                             col = dotColor(col, dp);
+                        }
 
                         draw(pix, j, i, col);
 
-                        zBuffer[i * 800 + j] = Math.abs(tex_w);
+                        zBuffer[i * getFrameWidth() + j] = Math.abs(tex_w);
                     }
                      t += tstep;
                      
@@ -666,9 +679,9 @@ public class DrawUtils
 
    public static void draw(int[] pixels, int x, int y, int col)
    {
-       if(x >= 0 && y >= 0 && x <= 800 && y <= 600)
+       if(x >= 0 && y >= 0 && x <= getFrameWidth() && y <= getFrameHeight())
        {
-           pixels[x + y * 800] = col;
+           pixels[x + y * getFrameWidth()] = col;
        }
    }
    
@@ -699,6 +712,76 @@ public class DrawUtils
            pixels[x + y * 800] = col.getRGB();
        }
    }
+   
+    
+    public static BufferedImage blur(BufferedImage image, int[] filter, int filterWidth) 
+    {
+        if (filter.length % filterWidth != 0) {
+            throw new IllegalArgumentException("filter contains a incomplete row");
+        }
+
+        final int width = image.getWidth();
+        final int height = image.getHeight();
+        final int sum = IntStream.of(filter).sum();
+
+        int[] input = image.getRGB(0, 0, width, height, null, 0, width);
+
+        int[] output = new int[input.length];
+
+        final int pixelIndexOffset = width - filterWidth;
+        final int centerOffsetX = filterWidth / 2;
+        final int centerOffsetY = filter.length / filterWidth / 2;
+
+        // apply filter
+        for (int h = height - filter.length / filterWidth + 1, w = width - filterWidth + 1, y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                int r = 0;
+                int g = 0;
+                int b = 0;
+                for (int filterIndex = 0, pixelIndex = y * width + x;
+                        filterIndex < filter.length;
+                        pixelIndex += pixelIndexOffset) {
+                    for (int fx = 0; fx < filterWidth; fx++, pixelIndex++, filterIndex++) {
+                        int col = input[pixelIndex];
+                        int factor = filter[filterIndex];
+
+                        // sum up color channels seperately
+                        r += ((col >>> 16) & 0xFF) * factor;
+                        g += ((col >>> 8) & 0xFF) * factor;
+                        b += (col & 0xFF) * factor;
+                    }
+                }
+                r /= sum;
+                g /= sum;
+                b /= sum;
+                // combine channels with full opacity
+                output[x + centerOffsetX + (y + centerOffsetY) * width] = (r << 16) | (g << 8) | b | 0xFF000000;
+            }
+        }
+
+        BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        result.setRGB(0, 0, width, height, output, 0, width);
+        return result;
+    }
+
+    public static BufferedImage toBufferedImage(Image img)
+    {
+        if (img instanceof BufferedImage)
+        {
+            return (BufferedImage) img;
+        }
+
+        // Create a buffered image with transparency
+        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+        // Draw the image on to the buffered image
+        Graphics2D bGr = bimage.createGraphics();
+        bGr.drawImage(img, 0, 0, null);
+        bGr.dispose();
+
+        // Return the buffered image
+        return bimage;
+    }
    
     public static void tigrLine(int[] pixels, int x0, int y0, int x1, int y1, int color) 
     {
@@ -738,6 +821,71 @@ public class DrawUtils
                 draw(pixels, i + x, j + y, col);
             }
         }
+    }
+    
+    public static void graphics_draw_triangle(int[] pixels, int x1, int y1, int x2, int y2, int x3, int y3, int col)
+    {
+        graphics_draw_line(pixels, x1, y1, x2, y2, col);
+        graphics_draw_line(pixels, x2, y2, x3, y3, col);
+        graphics_draw_line(pixels, x3, y3, x1, y1, col);
+    }
+    
+    public static void graphics_draw_line(int[] pixels, int x0, int y0, int x1, int y1, int color)
+    {
+            int dy = y1 - y0;
+            int dx = x1 - x0;
+            int sx, sy;
+
+            if(dy < 0)
+            {
+                    dy = -dy;
+                    sy = -1;
+            }
+            else
+                    sy = 1;
+
+            if(dx < 0)
+            {
+                    dx = -dx;
+                    sx = -1;
+            }
+            else
+                    sx = 1;
+
+            dy <<= 1;
+            dx <<= 1;
+
+            draw(pixels, x0, y0, color);
+            if(dx > dy)
+            {
+                    int frac = dy - (dx >> 1);
+                    while(x0 != x1)
+                    {
+                            if(frac >= 0)
+                            {
+                                    y0 += sy;
+                                    frac -= dx;
+                            }
+                            x0 += sx;
+                            frac += dy;
+                            draw(pixels, x0, y0 , color);
+                    }
+            }
+            else
+            {
+                    int frac = dx - (dy >> 1);
+                    while(y0 != y1)
+                    {
+                            if(frac >= 0)
+                            {
+                                    x0 += sx;
+                                    frac -= dy;
+                            }
+                            y0 += sy;
+                            frac += dx;
+                            draw(pixels, x0, y0 , color);
+                    }
+            }
     }
     
     

@@ -84,6 +84,12 @@ public class CommandHandler implements KeyListener
                                 case "TEXTURED":
                                 gp.drawState = gp.TEXTURED;
                                 break;
+                                case "LIGHTING":
+                                    if(split[i+1].equals("DIRECTIONAL"))
+                                    {
+                                        gp.directionalLighting = true;
+                                    }
+                                break;
                             }
                         }
                     }

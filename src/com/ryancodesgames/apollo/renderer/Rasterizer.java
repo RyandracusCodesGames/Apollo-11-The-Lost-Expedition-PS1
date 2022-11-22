@@ -5,9 +5,9 @@ import static com.ryancodesgames.apollo.ApolloPS1.getFrameHeight;
 import static com.ryancodesgames.apollo.ApolloPS1.getFrameWidth;
 import com.ryancodesgames.apollo.camera.Camera;
 import static com.ryancodesgames.apollo.gfx.ColorUtils.BLACK;
-import static com.ryancodesgames.apollo.gfx.DrawUtils.DrawTriangle;
 import static com.ryancodesgames.apollo.gfx.DrawUtils.TexturedTriangle;
 import static com.ryancodesgames.apollo.gfx.DrawUtils.fillTriangle;
+import static com.ryancodesgames.apollo.gfx.DrawUtils.graphics_draw_triangle;
 import com.ryancodesgames.apollo.gfx.GraphicsContext;
 import com.ryancodesgames.apollo.gfx.ZBuffer;
 import com.ryancodesgames.apollo.mathlib.Matrix;
@@ -17,11 +17,13 @@ import com.ryancodesgames.apollo.mathlib.Triangle;
 import com.ryancodesgames.apollo.mathlib.Vec2D;
 import com.ryancodesgames.apollo.mathlib.Vec3D;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 
 public class Rasterizer 
@@ -38,8 +40,9 @@ public class Rasterizer
     private boolean fog;
     private double intensity;
     private int drawState;
+    private boolean directionalLighting;
     
-    public Rasterizer(PolygonGroup poly, Camera camera, Matrix matProj,Vec3D vLookDir, ZBuffer zBuffer, Graphics2D g2, int[] pixels, boolean fog, double intensity, int drawState)
+    public Rasterizer(PolygonGroup poly, Camera camera, Matrix matProj,Vec3D vLookDir, ZBuffer zBuffer, Graphics2D g2, int[] pixels, boolean fog, boolean directionalLighting, double intensity, int drawState)
     {
         this.poly = poly;
         this.camera = camera;
@@ -51,6 +54,7 @@ public class Rasterizer
         this.fog = fog;
         this.intensity = intensity;
         this.drawState = drawState;
+        this.directionalLighting = directionalLighting;
     }
  
     public void draw()
@@ -60,7 +64,7 @@ public class Rasterizer
        triangleCount = 0;
 
        List<Triangle> vecTrianglesToRaster = new ArrayList<>();
-
+       
        for(Mesh mesh: poly.getPolygonGroup())
        {
            Vec3D vUp = new Vec3D(0,1,0);
@@ -179,6 +183,7 @@ public class Rasterizer
                             triProjected.tex = mesh.tex;
 
                             vecTrianglesToRaster.add(triProjected);
+                            triProjected.dp = dp;
                     }
     
                 }
@@ -224,9 +229,9 @@ public class Rasterizer
                         switch(p)
                         {
                             case 0:{trisToAdd = vec.triangleClipAgainstPlane(new Vec3D(0,0,0),new Vec3D(0,1,0),test,clipped);}break;
-                            case 1:{trisToAdd = vec.triangleClipAgainstPlane(new Vec3D(0,600-1,0),new Vec3D(0,-1,0),test,clipped);}break;
+                            case 1:{trisToAdd = vec.triangleClipAgainstPlane(new Vec3D(0,getFrameHeight()-1,0),new Vec3D(0,-1,0),test,clipped);}break;
                             case 2:{trisToAdd = vec.triangleClipAgainstPlane(new Vec3D(0,0,0),new Vec3D(1,0,0),test,clipped);}break;
-                            case 3:{trisToAdd = vec.triangleClipAgainstPlane(new Vec3D(800-1,0,0),new Vec3D(-1,0,0),test,clipped);}break;
+                            case 3:{trisToAdd = vec.triangleClipAgainstPlane(new Vec3D(getFrameWidth()-1,0,0),new Vec3D(-1,0,0),test,clipped);}break;
                         }
 
                         for (int w = 0; w < trisToAdd; w++)
@@ -255,13 +260,14 @@ public class Rasterizer
       
 //                   texturedTriangle(g2, (int)tt.vec3d.x,(int)tt.vec3d.y, tt.vec2d.u, tt.vec2d.v,(int)tt.vec3d2.x,(int)tt.vec3d2.y,
 //                   tt.vec2d2.u, tt.vec2d2.v,(int)tt.vec3d3.x,(int)tt.vec3d3.y, tt.vec2d3.u, tt.vec2d3.v,
-//                    meshCube.img, visibility, false, pixels);
+//                    meshCube.img, visibility, false, pixels); 
+                    
                      if(drawState == 2)
                      {
                           TexturedTriangle(g2, (int)tt.vec3d.x,(int)tt.vec3d.y, tt.vec2d.u, tt.vec2d.v,tt.vec2d.w,
                            (int)tt.vec3d2.x,(int)tt.vec3d2.y, tt.vec2d2.u, tt.vec2d2.v, tt.vec2d2.w,
                             (int)tt.vec3d3.x,(int)tt.vec3d3.y, tt.vec2d3.u, tt.vec2d3.v, tt.vec2d3.w,
-                        tt.tex,d, fog, pixels, zBuffer.getZBuffer(), tt.tex.getTexArray());
+                        tt.tex,d, fog, directionalLighting, pixels, zBuffer.getZBuffer(), tt.tex.getTexArray(), tt.dp);
                      }
                      else if(drawState == 1)
                      {
@@ -270,7 +276,7 @@ public class Rasterizer
                      }
                      else
                      {
-                         DrawTriangle(pixels,(int)tt.vec3d.x,(int)tt.vec3d.y,(int)tt.vec3d2.x,(int)tt.vec3d2.y,
+                         graphics_draw_triangle(pixels,(int)tt.vec3d.x,(int)tt.vec3d.y,(int)tt.vec3d2.x,(int)tt.vec3d2.y,
                         (int)tt.vec3d3.x,(int)tt.vec3d3.y, BLACK);
                      }
                     
@@ -303,4 +309,5 @@ public class Rasterizer
     {
         return intensity;
     }
+
 }

@@ -14,6 +14,8 @@ public class Triangle
     
     public Texture tex;
     
+    public double dp;
+    
     public Triangle(Vec3D vec3d, Vec3D vec3d2, Vec3D vec3d3)
     {
         this.vec3d = vec3d;

@@ -9,7 +9,9 @@ import com.ryancodesgames.apollo.gameobject.Terrain;
 import static com.ryancodesgames.apollo.gfx.ColorUtils.GRAY;
 import static com.ryancodesgames.apollo.gfx.ColorUtils.WHITE;
 import static com.ryancodesgames.apollo.gfx.ColorUtils.blend;
+import static com.ryancodesgames.apollo.gfx.DrawUtils.blur;
 import static com.ryancodesgames.apollo.gfx.DrawUtils.fill;
+import static com.ryancodesgames.apollo.gfx.DrawUtils.toBufferedImage;
 import com.ryancodesgames.apollo.gfx.GraphicsContext;
 import com.ryancodesgames.apollo.gfx.ZBuffer;
 import com.ryancodesgames.apollo.input.KeyHandler;
@@ -113,6 +115,7 @@ public class GamePanel extends JPanel implements Runnable
     Rectangle rect = new Rectangle(0, 429, 400, 35);
     public Rectangle cursor = new Rectangle(12, 435, 7, 18);
     public boolean fog;
+    public boolean directionalLighting;
     //FOG INTENSITY
     public double intense = 0.055;
     
@@ -231,8 +234,8 @@ public class GamePanel extends JPanel implements Runnable
         meshEarth = new Mesh(tris, img2);
         meshTemple = new Mesh(tris3, img4);
         meshPS1 = new Mesh(tris5, img6);
-        meshCargo = new Cargo(1852, -50, 2660, 50, 50, 150,img3);
-        meshCargo2 = new Cargo(2002, -50, 2660, 50, 50, 150,img3);
+        meshCargo = new Cargo(0, 0, 0, 50, 50, 150,img3);
+        meshCargo2 = new Cargo(0, 0, 0, 50, 50, 150,img3);
         meshBase = new Mesh(tris4, img5);
         
         moonTerrain.setTerain(meshCube);
@@ -249,6 +252,8 @@ public class GamePanel extends JPanel implements Runnable
         meshCube.transform.setTranslationMatrix(0, 0, 8);     
         meshTemple.transform.setTranslationMatrix(-1955, -140, 2479);
         meshBase.transform.setTranslationMatrix(2002, -85, 3314);
+        meshCargo.getCargo().transform.setTranslationMatrix( 1852, -50, 2660);
+        meshCargo2.getCargo().transform.setTranslationMatrix(2002, -50, 2660);
 
     }
     
@@ -345,10 +350,10 @@ public class GamePanel extends JPanel implements Runnable
         super.paintComponent(g);
         
         int[] pi = pixels; // this avoid crash when resizing
-        if(pi.length != 800 * 600) return;        
+        if(pi.length != frameWidth * frameHeight) return;        
         fill(pixels, frameWidth, frameHeight, blend(GRAY, WHITE, 0.4f));
         
-        Graphics2D g2 = (Graphics2D)g;
+        Graphics2D g2 = (Graphics2D)g;       
 
 //        //FILL SCREEN BLACK
 //        g.setColor(Color.black);
@@ -358,7 +363,7 @@ public class GamePanel extends JPanel implements Runnable
         meshEarth.transform.setRotAngleZ(fTheta * 0.5);
         meshEarth.transform.setRotAngleX(fTheta);
         meshEarth.transform.setTranslationMatrix(0, -1400, 24000);
-  
+
         Vec3D vUp = new Vec3D(0,1,0);
         Vec3D vTarget = new Vec3D(0,0,1);
         Matrix matCameraRotated = new Matrix(new double[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}});
@@ -373,9 +378,12 @@ public class GamePanel extends JPanel implements Runnable
         Matrix matView = new Matrix(new double[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}});
         matView = matView.inverseMatrix(matCamera);
         
-        Rasterizer renderer = new Rasterizer(polygon, vCamera, matProj, vLookDir, zBuffer, g2, pixels, fog, intense, drawState);
+        Rasterizer renderer = new Rasterizer(polygon, vCamera, matProj, vLookDir, zBuffer, g2, pixels, fog, directionalLighting, intense, drawState);
         renderer.draw();
         
+        int[] filter = {1, 2, 1, 2, 4, 2, 1, 2, 1};
+        int filterWidth = 3;
+        BufferedImage blurred = blur(toBufferedImage(imageBuffer), filter, filterWidth);
 
         // ask ImageProducer to update image
          mImageProducer.newPixels();            
@@ -391,7 +399,7 @@ public class GamePanel extends JPanel implements Runnable
         g2.drawString("Triangles:"+" "+String.valueOf(renderer.getTriangleCount()), 10, 150);
         g2.drawString("Textured = TRUE", 10, 180);
         g2.drawString("Yaw:"+" "+String.format("%.4f", fYaw), 10, 210);
-        
+
         if(state == commandState)
        {
             Character[] s = cmd.getCommand().toArray(new Character[cmd.getCommand().size()]);
@@ -399,9 +407,9 @@ public class GamePanel extends JPanel implements Runnable
 
             int size = cmd.getCommand().size();
 
-            for(int i = 0; i < size; i++)
+            for(int ii = 0; ii < size; ii++)
             {
-                com[i] = cmd.getCommand().get(i);
+                com[ii] = cmd.getCommand().get(ii);
             }
             
             g2.setColor(Color.gray.darker());
@@ -423,7 +431,8 @@ public class GamePanel extends JPanel implements Runnable
     public boolean imageUpdate(Image image, int a, int b, int c, int d, int e) {
         return true;
     }
-    
+   
+
     //THIS FUNCTION HANDLES THEME MUSIC MEANT TO LOOP OVER A PERIOD OF TIME
     public void setSound(int i)
     {

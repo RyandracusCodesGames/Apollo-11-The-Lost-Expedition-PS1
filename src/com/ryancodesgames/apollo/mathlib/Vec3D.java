@@ -221,6 +221,7 @@ public class Vec3D
         {
             out[0].col = in.col;
             out[0].tex = in.tex;
+            out[0].dp = in.dp;
             out[0].vec3d = inside_points[0];
             out[0].vec2d = inside_tex[0];
             
@@ -244,6 +245,7 @@ public class Vec3D
             
             out[0].col = in.col;
             out[0].tex = in.tex;
+            out[0].dp = in.dp;
             out[0].vec3d = inside_points[0];
             out[0].vec3d2 = inside_points[1];
             out[0].vec2d = inside_tex[0];
@@ -256,6 +258,7 @@ public class Vec3D
             
             out[1].col = in.col;
             out[1].tex = in.tex;
+            out[1].dp = in.dp;
             out[1].vec3d = inside_points[1];
             out[1].vec2d = inside_tex[1];
             out[1].vec3d2 = out[0].vec3d3; 

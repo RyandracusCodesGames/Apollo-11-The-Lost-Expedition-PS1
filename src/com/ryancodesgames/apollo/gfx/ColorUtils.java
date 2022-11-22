@@ -91,6 +91,23 @@ public class ColorUtils
         return a << 24 | r << 16 | g << 8 | b ;
     }
     
+    public static int dotColor(int col, double factor)
+    {
+        int i1 = col;
+        
+        int a1 = (i1 >> 24 & 0xff);
+        int r1 = ((i1 & 0xff0000) >> 16);
+        int g1 = ((i1 & 0xff00) >> 8);
+        int b1 = (i1 & 0xff);
+        
+        int a = (int)(a1 * factor);
+        int r = (int)(r1 * factor);
+        int g = (int)(g1 * factor);
+        int b = (int)(b1 * factor);
+        
+        return a << 24 | r << 16 | g << 8 | b;
+    }
+    
     public static int blend(int col, int col2, float ratio)
     {
         if ( ratio > 1f ) ratio = 1f;
