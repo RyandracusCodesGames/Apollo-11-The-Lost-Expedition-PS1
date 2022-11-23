@@ -6,9 +6,7 @@ import static com.ryancodesgames.apollo.ApolloPS1.getFrameWidth;
 import com.ryancodesgames.apollo.camera.Camera;
 import com.ryancodesgames.apollo.gameobject.Cargo;
 import com.ryancodesgames.apollo.gameobject.Terrain;
-import static com.ryancodesgames.apollo.gfx.ColorUtils.GRAY;
-import static com.ryancodesgames.apollo.gfx.ColorUtils.WHITE;
-import static com.ryancodesgames.apollo.gfx.ColorUtils.blend;
+import static com.ryancodesgames.apollo.gfx.ColorUtils.BLACK;
 import static com.ryancodesgames.apollo.gfx.DrawUtils.blur;
 import static com.ryancodesgames.apollo.gfx.DrawUtils.fill;
 import static com.ryancodesgames.apollo.gfx.DrawUtils.toBufferedImage;
@@ -351,7 +349,7 @@ public class GamePanel extends JPanel implements Runnable
         
         int[] pi = pixels; // this avoid crash when resizing
         if(pi.length != frameWidth * frameHeight) return;        
-        fill(pixels, frameWidth, frameHeight, blend(GRAY, WHITE, 0.4f));
+        fill(pixels, frameWidth, frameHeight, BLACK);
         
         Graphics2D g2 = (Graphics2D)g;       
 

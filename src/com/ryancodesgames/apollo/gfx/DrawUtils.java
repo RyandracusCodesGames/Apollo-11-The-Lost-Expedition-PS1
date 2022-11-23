@@ -3,6 +3,7 @@ package com.ryancodesgames.apollo.gfx;
 
 import static com.ryancodesgames.apollo.ApolloPS1.getFrameHeight;
 import static com.ryancodesgames.apollo.ApolloPS1.getFrameWidth;
+import static com.ryancodesgames.apollo.gfx.ColorUtils.BLACK;
 import static com.ryancodesgames.apollo.gfx.ColorUtils.GRAY;
 import static com.ryancodesgames.apollo.gfx.ColorUtils.WHITE;
 import static com.ryancodesgames.apollo.gfx.ColorUtils.blend;
@@ -418,7 +419,7 @@ public class DrawUtils
                         int iv = (int) ((tex_v / tex_w) * tex.getHeight()) & tex.getHeightMask();
                         int col = tex.getTexArray()[iu + (iv << tex.getWidthShift())];
                                                
-                        int backgroundColor = blend(GRAY, WHITE, 0.4f);
+                        int backgroundColor = BLACK;
                         
                         if(fog)
                         {
@@ -509,7 +510,7 @@ public class DrawUtils
                         int iv = (int) ((tex_v / tex_w) * tex.getHeight()) & tex.getHeightMask();
                         int col = tex.getTexArray()[iu + (iv << tex.getWidthShift())];
                                                
-                        int backgroundColor = blend(GRAY, WHITE, 0.4f);
+                        int backgroundColor = BLACK;
                         
                         if(fog)
                         {
