@@ -419,7 +419,7 @@ public class DrawUtils
                         int iv = (int) ((tex_v / tex_w) * tex.getHeight()) & tex.getHeightMask();
                         int col = tex.getTexArray()[iu + (iv << tex.getWidthShift())];
                                                
-                        int backgroundColor = BLACK;
+                        int backgroundColor = blend(GRAY, WHITE, 0.4f);
                         
                         if(fog)
                         {
@@ -510,7 +510,7 @@ public class DrawUtils
                         int iv = (int) ((tex_v / tex_w) * tex.getHeight()) & tex.getHeightMask();
                         int col = tex.getTexArray()[iu + (iv << tex.getWidthShift())];
                                                
-                        int backgroundColor = BLACK;
+                        int backgroundColor = blend(GRAY, WHITE, 0.4f);
                         
                         if(fog)
                         {

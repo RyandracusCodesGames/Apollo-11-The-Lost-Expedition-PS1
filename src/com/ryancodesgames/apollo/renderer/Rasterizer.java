@@ -5,6 +5,7 @@ import static com.ryancodesgames.apollo.ApolloPS1.getFrameHeight;
 import static com.ryancodesgames.apollo.ApolloPS1.getFrameWidth;
 import com.ryancodesgames.apollo.camera.Camera;
 import static com.ryancodesgames.apollo.gfx.ColorUtils.BLACK;
+import static com.ryancodesgames.apollo.gfx.ColorUtils.ORANGE;
 import static com.ryancodesgames.apollo.gfx.DrawUtils.TexturedTriangle;
 import static com.ryancodesgames.apollo.gfx.DrawUtils.fillTriangle;
 import static com.ryancodesgames.apollo.gfx.DrawUtils.graphics_draw_triangle;
@@ -17,13 +18,11 @@ import com.ryancodesgames.apollo.mathlib.Triangle;
 import com.ryancodesgames.apollo.mathlib.Vec2D;
 import com.ryancodesgames.apollo.mathlib.Vec3D;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 
 public class Rasterizer 
@@ -257,7 +256,6 @@ public class Rasterizer
                     d = d - Math.floor(d) + intensity;
                     
                     d = Math.min(Math.max(((maxFogDepth - d)/(minFogDepth - maxFogDepth)),0.0),1.0);
-      
 //                   texturedTriangle(g2, (int)tt.vec3d.x,(int)tt.vec3d.y, tt.vec2d.u, tt.vec2d.v,(int)tt.vec3d2.x,(int)tt.vec3d2.y,
 //                   tt.vec2d2.u, tt.vec2d2.v,(int)tt.vec3d3.x,(int)tt.vec3d3.y, tt.vec2d3.u, tt.vec2d3.v,
 //                    meshCube.img, visibility, false, pixels); 

@@ -6,7 +6,9 @@ import static com.ryancodesgames.apollo.ApolloPS1.getFrameWidth;
 import com.ryancodesgames.apollo.camera.Camera;
 import com.ryancodesgames.apollo.gameobject.Cargo;
 import com.ryancodesgames.apollo.gameobject.Terrain;
-import static com.ryancodesgames.apollo.gfx.ColorUtils.BLACK;
+import static com.ryancodesgames.apollo.gfx.ColorUtils.GRAY;
+import static com.ryancodesgames.apollo.gfx.ColorUtils.WHITE;
+import static com.ryancodesgames.apollo.gfx.ColorUtils.blend;
 import static com.ryancodesgames.apollo.gfx.DrawUtils.blur;
 import static com.ryancodesgames.apollo.gfx.DrawUtils.fill;
 import static com.ryancodesgames.apollo.gfx.DrawUtils.toBufferedImage;
@@ -32,10 +34,12 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.MemoryImageSource;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -280,12 +284,12 @@ public class GamePanel extends JPanel implements Runnable
      {
         try
         {
-            img = ImageIO.read(getClass().getResource("/com/ryancodesgames/apollo/gfx/moon.png"));
-            img2 = ImageIO.read(getClass().getResource("/com/ryancodesgames/apollo/gfx/earthtex.png"));
-            img3 = ImageIO.read(getClass().getResource("/com/ryancodesgames/apollo/gfx/cargoatlas.png"));
-            img4 = ImageIO.read(getClass().getResource("/com/ryancodesgames/apollo/gfx/temple.png"));
-            img5 = ImageIO.read(getClass().getResource("/com/ryancodesgames/apollo/gfx/yes.png"));
-            img6 = ImageIO.read(getClass().getResource("/com/ryancodesgames/apollo/gfx/ps1logo.png"));
+            img = ImageIO.read(new File("./res/moon.png"));
+            img2 = ImageIO.read(new File("./res/earthtex.png"));
+            img3 = ImageIO.read(new File("./res/cargoatlas.png"));
+            img4 = ImageIO.read(new File("./res/temple.png"));
+            img5 = ImageIO.read(new File("./res/yes.png"));
+            img6 = ImageIO.read(new File("./res/ps1logo.png"));
         }
         catch(IOException e)
         {
@@ -349,7 +353,7 @@ public class GamePanel extends JPanel implements Runnable
         
         int[] pi = pixels; // this avoid crash when resizing
         if(pi.length != frameWidth * frameHeight) return;        
-        fill(pixels, frameWidth, frameHeight, BLACK);
+        fill(pixels, frameWidth, frameHeight, blend(GRAY, WHITE, 0.4f));
         
         Graphics2D g2 = (Graphics2D)g;       
 
@@ -358,6 +362,7 @@ public class GamePanel extends JPanel implements Runnable
 //        g.fillRect(0, 0, frameWidth, frameHeight);
         
         fTheta += 0.015;
+
         meshEarth.transform.setRotAngleZ(fTheta * 0.5);
         meshEarth.transform.setRotAngleX(fTheta);
         meshEarth.transform.setTranslationMatrix(0, -1400, 24000);
@@ -368,13 +373,15 @@ public class GamePanel extends JPanel implements Runnable
         matCameraRotated = m.rotationMatrixY(fYaw);
         vLookDir = m.multiplyMatrixVector(vTarget, matCameraRotated);
         vTarget = vTarget.addVector(vCamera.getCamera(), vLookDir);
-        
         //USING THE INFORMATION PROVIDED ABOVE TO DEFIEN A CAMERA MATRIX
         Matrix matCamera = new Matrix(new double[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}});
         matCamera = matCamera.pointAtMatrix(vCamera.getCamera(), vTarget, vUp);
         
         Matrix matView = new Matrix(new double[][]{{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}});
         matView = matView.inverseMatrix(matCamera);
+        
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
         
         Rasterizer renderer = new Rasterizer(polygon, vCamera, matProj, vLookDir, zBuffer, g2, pixels, fog, directionalLighting, intense, drawState);
         renderer.draw();
